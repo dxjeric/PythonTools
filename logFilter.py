@@ -2,7 +2,10 @@
 import sys,os,io
 import chardet
 
+# 需要处理的文件名
 filterLogFiles = ["centerserver.log", "gameserver.log", "gateserver.log", "loginserver.log", "worldserver.log"]
+
+# 处理的文件夹
 filterLogDir = "E:/log/180723143145"
 
 uniqErrorsStack     = []    # 代码堆栈信息
@@ -54,10 +57,21 @@ def filterOneError(oneLine):
 def processOneLogFile(fileName):
     global uniqErrorsStack
     global uniqErrorsFirstLine
+    global uniqErrorsNoPres
+    global curErrorStack
+    global curErrorFistLine
+    global curErrorNoPres
 
     if not os.path.exists(fileName):
         return
     
+    uniqErrorsStack.clear()
+    uniqErrorsFirstLine.clear()
+    uniqErrorsNoPres.clear()
+    curErrorStack       = ""
+    curErrorFistLine    = ""
+    curErrorNoPres      = ""
+
     print("processOneLogFile", fileName)
     fh = open(fileName, "r", encoding="utf-8")
     for line in fh.readlines():
@@ -78,12 +92,12 @@ def processOneLogFile(fileName):
         wf.write("\n")
 
     wf.close()
-    uniqErrorsStack.clear()
-    uniqErrorsFirstLine.clear()
-    uniqErrorsNoPres.clear()
 
 
 def processOneDir(dirName):
+    global uniqErrorsStack
+    global uniqErrorsFirstLine
+    global uniqErrorsNoPres
     for fn in filterLogFiles:
         processOneLogFile(dirName + "/" + fn)
 
