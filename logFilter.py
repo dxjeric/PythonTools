@@ -1,6 +1,5 @@
 # encoding: utf8
 import sys,os,io
-import chardet
 
 # 需要处理的文件名
 filterLogFiles = ["centerserver.log", "gameserver.log", "gateserver.log", "loginserver.log", "worldserver.log"]
