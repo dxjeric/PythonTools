@@ -64,9 +64,9 @@ def processOneLogFile(fileName):
     if not os.path.exists(fileName):
         return
     
-    uniqErrorsStack.clear()
-    uniqErrorsFirstLine.clear()
-    uniqErrorsNoPres.clear()
+    uniqErrorsStack		= []
+    uniqErrorsFirstLine	= []
+    uniqErrorsNoPres	= []
     curErrorStack       = ""
     curErrorFistLine    = ""
     curErrorNoPres      = ""
@@ -111,5 +111,7 @@ def main():
             processOneDir(root+ "/" + dirName)
         
 
-
-main()
+if sys.version_info[0] != 3:
+    print("需要在python 3.x版本上执行")
+else:
+    main()
