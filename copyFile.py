@@ -2,7 +2,7 @@
 # encoding: utf8
 ## python 版本3.x
 ## 支持配置 config.ini
-import os, io, shutil, errno
+import os, io, shutil, errno, sys
 import configparser
 from git import Git
 from enum import Enum
@@ -25,6 +25,18 @@ mapNavmeshCheckPathLen 	= len(mapNavmeshCheckPath)
 mapNavmeshFileType  	= 'bin'
 remoteMapRootPath		= r"\\192.168.10.154\诺亚手游内\mapData"
 
+# 用户远端拷贝地址
+userRemoteConfigPath	= ""
+userRemoteMapPath		= ""
+
+# 文件类型枚举
+class CopyType(Enum):
+	invalid		= -1
+	config 		= 1
+	mapJson 	= 2
+	mapNavmesh 	= 3
+
+# 加载配置项
 def initGlobalInfo():
 	global remoteConfigRootPath
 	global configCheckPath
@@ -93,7 +105,8 @@ def initGlobalInfo():
 		return False
 
 	return True
- 
+
+# 获取用户名称
 def getUserName():
 	global project
 	global globalUserName
@@ -102,20 +115,22 @@ def getUserName():
 	else:
 		return project.config("--local", "user.name")
 
-def getModifyFiles():
-	global project
-	# 修改和待添加的文件
-	allFiles = project.ls_files("-o", "--exclude-standard") + '\n' + project.ls_files("-m")
-	# 返回文件列表
-	return allFiles.splitlines()
+# 创建目录
+def createNewRemoteRootDir(rootDir):
+	if os.path.isdir(rootDir):
+		shutil.rmtree(rootDir)
 
-class CopyType(Enum):
-	invalid		= -1
-	config 		= 1
-	mapJson 	= 2
-	mapNavmesh 	= 3
-
-
+# 生成远端根目录
+def genRemoteDir():
+	global userRemoteConfigPath
+	global userRemoteMapPath
+	# 根据用户名创建新的远程文件夹
+	userName = getUserName()
+	userRemoteConfigPath = str.format(r"{}/{}", remoteConfigRootPath, userName)
+	createNewRemoteRootDir(userRemoteConfigPath)
+	userRemoteMapPath = str.format(r"{}/{}", remoteMapRootPath, userName)
+	createNewRemoteRootDir(userRemoteMapPath)
+	print("拷贝用户: ", userName, "<<<")
 
 def checkNeedCopy(filePath):
 	global configCheckPath
@@ -141,10 +156,7 @@ def checkNeedCopy(filePath):
 
 	return CopyType.invalid, ""
 
-def createNewRemoteRootDir(rootDir):
-	if os.path.isdir(rootDir):
-		shutil.rmtree(rootDir)
-
+# 拷贝单个文件
 def copyOneFile(filePath, remotePath):
 	print(str.format("拷贝 {}", filePath))
 	remoteDir = os.path.dirname(remotePath)
@@ -158,22 +170,13 @@ def copyOneFile(filePath, remotePath):
 
 	return True
 
-def process():
-	global project
-	# 根据用户名创建新的远程文件夹
-	userName = getUserName()
-	userRemoteConfigPath = str.format(r"{}/{}", remoteConfigRootPath, userName)
-	createNewRemoteRootDir(userRemoteConfigPath)
-	userRemoteMapPath = str.format(r"{}/{}", remoteMapRootPath, userName)
-	createNewRemoteRootDir(userRemoteMapPath)
-	print("拷贝用户: ", userName, "<<<")
 
+# 根据文件列表拷贝到对应目录
+def copyFileByList(fl):
+	global userRemoteConfigPath
+	global userRemoteMapPath
 	needCopyFileCount	 = 0
 	totalCopyFileCount	= 0
-	# 开始拷贝文件夹
-	fl = getModifyFiles()
-	# print(fl)
-	print("开始拷贝修改文件 >>>")
 	for filePath in fl:
 		filePath = str.format("{}/{}", projectDir, filePath)
 		_copyType, relativePath = checkNeedCopy(filePath)
@@ -203,23 +206,100 @@ def process():
 		print("-------------------------------------------------------------------")
 		return True
 
+# 获取修改的文件列表 新增文件列表
+def getModifyFiles():
+	global project
+	# 修改和待添加的文件
+	allFiles = project.ls_files("-o", "--exclude-standard") + '\n' + project.ls_files("-m")
+	# 返回文件列表
+	return allFiles.splitlines()
+
+# 拷贝对应的修改文件 未commit的文件
+def processModify():
+	# 开始拷贝文件夹
+	fl = getModifyFiles()
+	return copyFileByList(fl)
+
+
+# 拷贝全文件
+def processCopyAll():
+	global userRemoteConfigPath
+	global userRemoteMapPath
+	
+	# 全拷贝配置
+	configDir = str.format("{}/{}", projectDir, configCheckPath)
+	shutil.copytree(configDir, userRemoteConfigPath)
+
+	# 全拷贝地图
+	mapJsonDir = str.format("{}/{}", projectDir, mapJsonCheckPath)
+	remoteJsonDir = str.format("{}/mapEditData", userRemoteMapPath)
+	shutil.copytree(mapJsonDir, remoteJsonDir)
+	mapNavmeshDir = str.format("{}/{}", projectDir, mapNavmeshCheckPath)
+	remoteNavmeshDir = str.format("{}/navmeshFile", userRemoteMapPath)
+	shutil.copytree(mapNavmeshDir, remoteNavmeshDir)
+	print("-------------------------------------------------------------------")
+	print("----------------------------拷贝成功-------------------------------")
+	print("-------------------------------------------------------------------")
+
+# 根据提交SHA-1找出修改文件
+def getCommitFileBySHA(sha):
+	try:
+		fi = project.show(sha, "--name-only", "--pretty=format:")
+		return fi.splitlines()
+	except Exception as e:
+		return False
+
+
+# 根据提交文件内容拷贝
+def processCommit():
+	sha = input("请输入提交ID\n提交ID在git log中查看93cc057eb2 或者工具showlog中 SHA-1)\n")
+	fl = False
+	while not fl:
+		fl = getCommitFileBySHA(sha)
+		if not fl:
+			sha = input("请输入正确的提交ID\n")
+
+	return copyFileByList(fl)
 
 def main():
+	global userRemoteConfigPath
+	global userRemoteMapPath
+
 	try:
 		print("初始化 ... ")
 		if not initGlobalInfo():
 			return
 
-		print("获取拷贝文件数据 >>> ")
-		if not process():
-			os.system("pause")
+		# 生成远端地址
+		genRemoteDir()
+
+		if userRemoteConfigPath == "" or userRemoteMapPath == "" :
+			print("-------------------------------------------------------------------")
+			print("-------------------------远端地址异常------------------------------")
+			print("-------------------------------------------------------------------")
+			return
+		
+		if len(sys.argv) == 1 or sys.argv[1] == '1':
+			print("开始拷贝修改配置 >>> ")
+			processModify()
+		elif sys.argv[1] == '2':
+			print("开始拷贝全部配置 >>> ")
+			processCopyAll()
+		elif sys.argv[1] == '3':
+			print("开始拷贝提交配置 >>> ")
+			processCommit()
 		else:
-			os.system("pause")
+			print("-------------------------------------------------------------------")
+			print("-----------------------启动参数异常！ 找程序------------------------")
+			print("-------------------------------------------------------------------")
+	except (KeyboardInterrupt,EOFError):
+		pass
 	except Exception as e:
-		print(e)
+		print(type(e), e)
 		print("-------------------------------------------------------------------")
 		print("--------------------------执行异常！ 找程序------------------------")
 		print("-------------------------------------------------------------------")
+	finally:
 		os.system("pause")
 
 main()
