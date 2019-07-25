@@ -25,6 +25,9 @@ mapNavmeshCheckPathLen 	= len(mapNavmeshCheckPath)
 mapNavmeshFileType  	= 'bin'
 remoteMapRootPath		= r"\\192.168.10.154\诺亚手游内\mapData"
 
+# 服务器批处理
+serverBatFileName = "copyConfigFromClient.bat"
+
 # 用户远端拷贝地址
 userRemoteConfigPath	= ""
 userRemoteMapPath		= ""
@@ -77,6 +80,9 @@ def initGlobalInfo():
 		if config['CONFIGMAP']['remoteMapRootPath']:
 			remoteMapRootPath = config['CONFIGMAP']['remoteMapRootPath']
 
+		if config['CONFIGSERVER']['serverBatFileName']:
+			serverBatFileName = config['CONFIGSERVER']['serverBatFileName']
+
 
 	if not os.path.exists(remoteConfigRootPath):
 		print(remoteConfigRootPath, "is invalid dir")
@@ -121,15 +127,17 @@ def createNewRemoteRootDir(rootDir):
 		shutil.rmtree(rootDir)
 
 # 生成远端根目录
-def genRemoteDir():
+def genRemoteDir(bMkdir):
 	global userRemoteConfigPath
 	global userRemoteMapPath
 	# 根据用户名创建新的远程文件夹
 	userName = getUserName()
 	userRemoteConfigPath = str.format(r"{}/{}", remoteConfigRootPath, userName)
-	createNewRemoteRootDir(userRemoteConfigPath)
-	userRemoteMapPath = str.format(r"{}/{}", remoteMapRootPath, userName)
-	createNewRemoteRootDir(userRemoteMapPath)
+	userRemoteMapPath 	 = str.format(r"{}/{}", remoteMapRootPath, userName)
+	if bMkdir:
+		createNewRemoteRootDir(userRemoteConfigPath)
+		createNewRemoteRootDir(userRemoteMapPath)
+
 	print("拷贝用户: ", userName, "<<<")
 
 def checkNeedCopy(filePath):
@@ -261,6 +269,22 @@ def processCommit():
 
 	return copyFileByList(fl)
 
+# 从远端拷贝到内网
+def copyRemoteConfigToServer():
+	global userRemoteConfigPath
+	global userRemoteMapPath
+	global serverBatFileName
+
+	serverBatFilePath = str.format("../../{}", serverBatFileName)
+	if not os.path.isfile(serverBatFilePath):
+		print("-------------------------------------------------------------------")
+		print("-------------------------批处理不存在------------------------------")
+		print("-------------------------------------------------------------------")
+		return
+	
+	cmd = str.format("cd ../../ & call {} {} {}", serverBatFileName, userRemoteConfigPath, userRemoteMapPath)
+	os.system(cmd)
+
 def main():
 	global userRemoteConfigPath
 	global userRemoteMapPath
@@ -271,7 +295,10 @@ def main():
 			return
 
 		# 生成远端地址
-		genRemoteDir()
+		if len(sys.argv) > 0 and sys.argv[1] != '4':
+			genRemoteDir(True)
+		else:
+			genRemoteDir(False)
 
 		if userRemoteConfigPath == "" or userRemoteMapPath == "" :
 			print("-------------------------------------------------------------------")
@@ -288,6 +315,9 @@ def main():
 		elif sys.argv[1] == '3':
 			print("开始拷贝提交配置 >>> ")
 			processCommit()
+		elif sys.argv[1] == '4':
+			print("开始拷贝配置 >>> ")
+			copyRemoteConfigToServer()
 		else:
 			print("-------------------------------------------------------------------")
 			print("-----------------------启动参数异常！ 找程序------------------------")
