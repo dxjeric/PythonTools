@@ -272,9 +272,14 @@ def processCopyAll():
 
 # 根据提交SHA-1找出修改文件
 def getCommitFileBySHA(sha):
+	global project
 	try:
-		fi = project.show(sha, "--name-only", "--pretty=format:")
-		return fi.splitlines()
+		dl = project.commit(sha).stats.files
+		fl = []
+		for fp in dl:
+			fl.append(fp)
+
+		return fl
 	except Exception as e:
 		return False
 
