@@ -4,7 +4,7 @@
 ## 支持配置 config.ini
 import os, io, shutil, errno, sys
 import configparser
-from git import Git
+from git import Git, Repo, util
 from enum import Enum
 
 # 基础配置
@@ -168,7 +168,7 @@ def checkNeedCopy(filePath):
 def copyOneFile(filePath, remotePath):
 	print(str.format("拷贝 {}", filePath))
 	remoteDir = os.path.dirname(remotePath)
-	try:		
+	try:
 		os.makedirs(remoteDir)
 	except OSError as e:
 		if e.errno != errno.EEXIST:
@@ -198,6 +198,7 @@ def copyFileByList(fl):
 		elif _copyType == CopyType.mapNavmesh:
 			needCopyFileCount = needCopyFileCount + 1
 			remoteFilePath = str.format(r"{}/navmeshFile/{}", userRemoteMapPath, relativePath)
+			remoteFilePath = remoteFilePath.replace(".bin", ".bytes")
 
 		if remoteFilePath != "" and copyOneFile(filePath, remoteFilePath):
 			totalCopyFileCount = totalCopyFileCount + 1
@@ -242,8 +243,8 @@ def processCopyAll():
 	mapJsonDir = str.format("{}/{}", projectDir, mapJsonCheckPath)
 	remoteJsonDir = str.format("{}/mapEditData", userRemoteMapPath)
 	shutil.copytree(mapJsonDir, remoteJsonDir)
-	mapNavmeshDir = str.format("{}/{}", projectDir, mapNavmeshCheckPath)
-	remoteNavmeshDir = str.format("{}/navmeshFile", userRemoteMapPath)
+	mapNavmeshDir = str.format("{}/{}/*.bin", projectDir, mapNavmeshCheckPath)
+	remoteNavmeshDir = str.format("{}/navmeshFile/*.bytes", userRemoteMapPath)
 	shutil.copytree(mapNavmeshDir, remoteNavmeshDir)
 	print("-------------------------------------------------------------------")
 	print("----------------------------拷贝成功-------------------------------")
@@ -288,14 +289,19 @@ def copyRemoteConfigToServer():
 def main():
 	global userRemoteConfigPath
 	global userRemoteMapPath
+	global projectDir
 
 	try:
 		print("初始化 ... ")
 		if not initGlobalInfo():
 			return
 
+		cmod = '1'
+		if len(sys.argv) >= 2:
+			cmod = sys.argv[1]
+
 		# 生成远端地址
-		if len(sys.argv) > 0 and sys.argv[1] != '4':
+		if cmod != '4':
 			genRemoteDir(True)
 		else:
 			genRemoteDir(False)
@@ -306,16 +312,16 @@ def main():
 			print("-------------------------------------------------------------------")
 			return
 
-		if len(sys.argv) == 1 or sys.argv[1] == '1':
+		if cmod == '1':
 			print("开始拷贝修改配置 >>> ")
 			processModify()
-		elif sys.argv[1] == '2':
+		elif cmod == '2':
 			print("开始拷贝全部配置 >>> ")
 			processCopyAll()
-		elif sys.argv[1] == '3':
+		elif cmod == '3':
 			print("开始拷贝提交配置 >>> ")
 			processCommit()
-		elif sys.argv[1] == '4':
+		elif cmod == '4':
 			print("开始拷贝配置 >>> ")
 			copyRemoteConfigToServer()
 		else:
