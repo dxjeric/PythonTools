@@ -9,7 +9,7 @@ from enum import Enum
 
 # 基础配置
 projectDir = r"../"
-Project = False
+project = False
 globalUserName = False
 
 # 配置拷贝
@@ -105,7 +105,7 @@ def initGlobalInfo():
 	mapNavmeshCheckPathLen 	= len(mapNavmeshCheckPath)
 
 	if os.path.exists(projectDir+"/.git"):
-		project = Git(projectDir)
+		project = Repo(projectDir)
 	else:
 		print(projectDir, "is invalid git repo")
 		return False
@@ -116,10 +116,32 @@ def initGlobalInfo():
 def getUserName():
 	global project
 	global globalUserName
+	
 	if globalUserName:
-		return project.config("--global", "user.name")
+		config = project.config_reader('global')
+		return config.get("user", "name")
 	else:
-		return project.config("--local", "user.name")
+		config = project.config_reader('repository')
+		return config.get("user", "name")
+
+def _getModifyFiles():
+	"""
+		获取为推送的文件
+		return: list
+	"""
+	global project
+	fl = []
+	for item in project.tree().diff(None):
+		fl.insert(0, item.a_path)
+	return fl
+
+def _getUntrackFiles():
+	"""
+		获取未跟踪的文件
+		return: list
+	"""
+	global project
+	return project.untracked_files
 
 # 创建目录
 def createNewRemoteRootDir(rootDir):
@@ -218,10 +240,8 @@ def copyFileByList(fl):
 # 获取修改的文件列表 新增文件列表
 def getModifyFiles():
 	global project
-	# 修改和待添加的文件
-	allFiles = project.ls_files("-o", "--exclude-standard") + '\n' + project.ls_files("-m")
 	# 返回文件列表
-	return allFiles.splitlines()
+	return _getModifyFiles() + _getUntrackFiles()
 
 # 拷贝对应的修改文件 未commit的文件
 def processModify():
