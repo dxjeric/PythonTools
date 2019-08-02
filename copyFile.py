@@ -2,7 +2,7 @@
 # encoding: utf8
 ## python 版本3.x
 ## 支持配置 config.ini
-import os, io, shutil, errno, sys
+import os, io, shutil, errno, sys, traceback
 import configparser
 from git import Git, Repo, util
 from enum import Enum
@@ -143,22 +143,28 @@ def _getUntrackFiles():
 	global project
 	return project.untracked_files
 
-# 创建目录
-def createNewRemoteRootDir(rootDir):
-	if os.path.isdir(rootDir):
+# 删除目录
+def rmOldRemoteRootDir(rootDir):
+	if os.path.exists(rootDir):
 		shutil.rmtree(rootDir)
 
 # 生成远端根目录
-def genRemoteDir(bMkdir):
+def genRemoteDir(mod):
 	global userRemoteConfigPath
 	global userRemoteMapPath
 	# 根据用户名创建新的远程文件夹
 	userName = getUserName()
 	userRemoteConfigPath = str.format(r"{}/{}", remoteConfigRootPath, userName)
 	userRemoteMapPath 	 = str.format(r"{}/{}", remoteMapRootPath, userName)
-	if bMkdir:
-		createNewRemoteRootDir(userRemoteConfigPath)
-		createNewRemoteRootDir(userRemoteMapPath)
+	if mod != '4':
+		rmOldRemoteRootDir(userRemoteConfigPath)
+		rmOldRemoteRootDir(userRemoteMapPath)
+
+	if mod != '4' and mod != '2':
+		# 模式2不创建，是因为shutil.copytree需要目标文件目录不存在
+		os.mkdir(userRemoteConfigPath)
+		os.mkdir(userRemoteMapPath)
+
 
 	print("拷贝用户: ", userName, "<<<")
 
@@ -200,6 +206,15 @@ def copyOneFile(filePath, remotePath):
 
 	return True
 
+def writeCopyCountToFile(count):
+	global userRemoteConfigPath
+
+	fn = str.format("{}/count.txt", userRemoteConfigPath)
+	f = open(fn, "w", encoding="utf-8")
+	if f:
+		f.write(str(count))
+		f.close()
+
 
 # 根据文件列表拷贝到对应目录
 def copyFileByList(fl):
@@ -232,6 +247,7 @@ def copyFileByList(fl):
 		print("-------------------------------------------------------------------")
 		return False
 	else:
+		writeCopyCountToFile(totalCopyFileCount)
 		print("-------------------------------------------------------------------")
 		print("----------------------------拷贝成功-------------------------------")
 		print("-------------------------------------------------------------------")
@@ -255,20 +271,52 @@ def processCopyAll():
 	global userRemoteConfigPath
 	global userRemoteMapPath
 	
+	srcCount	= 0		# 源的文件数量
+	copyCount 	= 0		# 拷贝的文件数量
+
 	# 全拷贝配置
 	configDir = str.format("{}/{}", projectDir, configCheckPath)
 	shutil.copytree(configDir, userRemoteConfigPath)
+	for root, dirs, files in os.walk(configDir):
+		srcCount = srcCount + len(files)
+
+	for root, dirs, files in os.walk(userRemoteConfigPath):
+		copyCount = copyCount + len(files)
 
 	# 全拷贝地图
 	mapJsonDir = str.format("{}/{}", projectDir, mapJsonCheckPath)
 	remoteJsonDir = str.format("{}/mapEditData", userRemoteMapPath)
 	shutil.copytree(mapJsonDir, remoteJsonDir)
-	mapNavmeshDir = str.format("{}/{}/*.bin", projectDir, mapNavmeshCheckPath)
-	remoteNavmeshDir = str.format("{}/navmeshFile/*.bytes", userRemoteMapPath)
-	shutil.copytree(mapNavmeshDir, remoteNavmeshDir)
-	print("-------------------------------------------------------------------")
-	print("----------------------------拷贝成功-------------------------------")
-	print("-------------------------------------------------------------------")
+
+	for root, dirs, files in os.walk(mapJsonDir):
+		srcCount = srcCount + len(files)
+
+	for root, dirs, files in os.walk(remoteJsonDir):
+		copyCount = copyCount + len(files)
+
+	mapNavmeshDir = str.format("{}/{}", projectDir, mapNavmeshCheckPath)
+	remoteNavmeshDir = str.format("{}/navmeshFile", userRemoteMapPath)
+
+	for root, dirs, files in os.walk(mapNavmeshDir):
+		for f in files:
+			if os.path.splitext(f)[-1] == ".bin":
+				srcCount = srcCount + 1
+				filePath = str.format("{}/{}", mapNavmeshDir, f)
+				remotePath = str.format("{}/{}", remoteNavmeshDir, f).replace(".bin", ".bytes")
+				if copyOneFile(filePath, remotePath):
+					copyCount = copyCount + 1
+
+
+	print("copyCount == srcCount:", copyCount, srcCount)
+	if copyCount == srcCount:
+		writeCopyCountToFile(copyCount)
+		print("-------------------------------------------------------------------")
+		print("----------------------------拷贝成功-------------------------------")
+		print("-------------------------------------------------------------------")
+	else:
+		print("-------------------------------------------------------------------")
+		print("----------------------------拷贝失败-------------------------------")
+		print("-------------------------------------------------------------------")
 
 # 根据提交SHA-1找出修改文件
 def getCommitFileBySHA(sha):
@@ -325,11 +373,7 @@ def main():
 		if len(sys.argv) >= 2:
 			cmod = sys.argv[1]
 
-		# 生成远端地址
-		if cmod != '4':
-			genRemoteDir(True)
-		else:
-			genRemoteDir(False)
+		genRemoteDir(cmod)
 
 		if userRemoteConfigPath == "" or userRemoteMapPath == "" :
 			print("-------------------------------------------------------------------")
@@ -356,7 +400,7 @@ def main():
 	except (KeyboardInterrupt,EOFError):
 		pass
 	except Exception as e:
-		print(type(e), e)
+		print(traceback.format_exc())
 		print("-------------------------------------------------------------------")
 		print("--------------------------执行异常！ 找程序------------------------")
 		print("-------------------------------------------------------------------")
