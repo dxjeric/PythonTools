@@ -2,7 +2,7 @@
 # encoding: utf8
 ## python 版本3.x
 ## 支持配置 config.ini
-import os, io, shutil, errno, sys, traceback
+import os, io, shutil, errno, sys, traceback, time, logging
 import configparser
 from git import Git, Repo, util
 from enum import Enum
@@ -27,10 +27,15 @@ remoteMapRootPath		= r"\\192.168.10.154\诺亚手游内\mapData"
 
 # 服务器批处理
 serverBatFileName = "copyConfigFromClient.bat"
+batPathParams = {}
+batCopyPaths = {}
 
 # 用户远端拷贝地址
 userRemoteConfigPath	= ""
 userRemoteMapPath		= ""
+
+# 文本日志
+logger = logging.getLogger()
 
 # 文件类型枚举
 class CopyType(Enum):
@@ -38,6 +43,27 @@ class CopyType(Enum):
 	config 		= 1
 	mapJson 	= 2
 	mapNavmesh 	= 3
+
+# 日志打印
+def log(format, *args):
+	global logger
+
+	logger.critical(format, *args)
+
+# 初始化日志系统
+def initLogSys():
+	global logger
+
+	formatter = logging.Formatter('[%(asctime)s] %(message)s')
+	fileHandler = logging.FileHandler('copy.log', mode='w', encoding='UTF-8')
+	fileHandler.setLevel(logging.CRITICAL)
+	fileHandler.setFormatter(formatter)
+	logger.addHandler(fileHandler)
+	logger.setLevel(logging.CRITICAL)
+	consoleHandler = logging.StreamHandler()
+	consoleHandler.setLevel(logging.CRITICAL)
+	consoleHandler.setFormatter(formatter)
+	logger.addHandler(consoleHandler)
 
 # 加载配置项
 def initGlobalInfo():
@@ -58,10 +84,7 @@ def initGlobalInfo():
 	if config.read('config.ini', 'utf8') and config['COMMON']:
 		if config['COMMON']['projectDir']:
 			projectDir = config['COMMON']['projectDir']
-
-		if config['COMMON']['globalUserName']:
-			globalUserName = (config['COMMON']['globalUserName'].lower() == 'true')
-
+	
 		if config['CONFIGFILE']['remoteConfigRootPath']:
 			remoteConfigRootPath = config['CONFIGFILE']['remoteConfigRootPath']
 
@@ -85,7 +108,7 @@ def initGlobalInfo():
 
 
 	if not os.path.exists(remoteConfigRootPath):
-		print(remoteConfigRootPath, "is invalid dir")
+		log("%s is invalid dir", remoteConfigRootPath)
 		return False
 
 	if projectDir[-1:] == '/' or projectDir[-1:] == '\\':
@@ -107,7 +130,7 @@ def initGlobalInfo():
 	if os.path.exists(projectDir+"/.git"):
 		project = Repo(projectDir)
 	else:
-		print(projectDir, "is invalid git repo")
+		log("%s is invalid git repo", projectDir)
 		return False
 
 	return True
@@ -165,8 +188,7 @@ def genRemoteDir(mod):
 		os.mkdir(userRemoteConfigPath)
 		os.mkdir(userRemoteMapPath)
 
-
-	print("拷贝用户: ", userName, "<<<")
+	log("拷贝用户: %s <<<", userName)
 
 def checkNeedCopy(filePath):
 	global configCheckPath
@@ -194,25 +216,25 @@ def checkNeedCopy(filePath):
 
 # 拷贝单个文件
 def copyOneFile(filePath, remotePath):
-	print(str.format("拷贝 {}", filePath))
+	log("拷贝 %s -> %s", filePath, remotePath)
 	remoteDir = os.path.dirname(remotePath)
 	try:
 		os.makedirs(remoteDir)
 	except OSError as e:
 		if e.errno != errno.EEXIST:
-			print("copyOneFile create dir erorr!", os.strerror(e.errno))
+			log("copyOneFile create dir erorr! %s", os.strerror(e.errno))
 			return False
 	shutil.copy(filePath, remotePath)
 
 	return True
 
-def writeCopyCountToFile(count):
+def writeCopyCountToFile(mod, count):
 	global userRemoteConfigPath
 
 	fn = str.format("{}/count.txt", userRemoteConfigPath)
 	f = open(fn, "w", encoding="utf-8")
 	if f:
-		f.write(str(count))
+		f.write(str.format("{}\n{}", mod, count))
 		f.close()
 
 
@@ -242,15 +264,15 @@ def copyFileByList(fl):
 			
 	
 	if totalCopyFileCount != needCopyFileCount:
-		print("-------------------------------------------------------------------")
-		print("----------------------拷贝文件异常！！！！！-----------------------")
-		print("-------------------------------------------------------------------")
+		log("-------------------------------------------------------------------")
+		log("----------------------拷贝文件异常！！！！！-----------------------")
+		log("-------------------------------------------------------------------")
 		return False
 	else:
-		writeCopyCountToFile(totalCopyFileCount)
-		print("-------------------------------------------------------------------")
-		print("----------------------------拷贝成功-------------------------------")
-		print("-------------------------------------------------------------------")
+		writeCopyCountToFile("modify", totalCopyFileCount)
+		log("-------------------------------------------------------------------")
+		log("----------------------------拷贝成功-------------------------------")
+		log("-------------------------------------------------------------------")
 		return True
 
 # 获取修改的文件列表 新增文件列表
@@ -306,17 +328,15 @@ def processCopyAll():
 				if copyOneFile(filePath, remotePath):
 					copyCount = copyCount + 1
 
-
-	print("copyCount == srcCount:", copyCount, srcCount)
 	if copyCount == srcCount:
-		writeCopyCountToFile(copyCount)
-		print("-------------------------------------------------------------------")
-		print("----------------------------拷贝成功-------------------------------")
-		print("-------------------------------------------------------------------")
+		writeCopyCountToFile("all", copyCount)
+		log("-------------------------------------------------------------------")
+		log("----------------------------拷贝成功-------------------------------")
+		log("-------------------------------------------------------------------")
 	else:
-		print("-------------------------------------------------------------------")
-		print("----------------------------拷贝失败-------------------------------")
-		print("-------------------------------------------------------------------")
+		log("-------------------------------------------------------------------")
+		log("----------------------------拷贝失败-------------------------------")
+		log("-------------------------------------------------------------------")
 
 # 根据提交SHA-1找出修改文件
 def getCommitFileBySHA(sha):
@@ -342,22 +362,106 @@ def processCommit():
 			sha = input("请输入正确的提交ID\n")
 
 	return copyFileByList(fl)
-
+# -------------------------------------------------------------------------------------------
 # 从远端拷贝到内网
+# -------------------------------------------------------------------------------------------
+# 获取文件拷贝地址
+def getFileCopyPaths(filePath):
+	global userRemoteConfigPath
+	global userRemoteMapPath
+	global batCopyPaths
+	tfp 	= filePath
+	isDir 	= False
+	fn 		= ""
+	while True:
+		if tfp == userRemoteConfigPath or tfp == userRemoteMapPath:
+			return []
+		elif batCopyPaths.get(tfp):
+			if isDir:
+				files = []
+				for d in batCopyPaths[tfp]:
+					files.append(str.format(r"{}\{}", d, fn))
+				return files
+			else:
+				return batCopyPaths[tfp]
+		else:
+			if isDir:
+				fn = str.format(r"{}\{}", os.path.basename(tfp), fn)
+			else:
+				fn = os.path.basename(tfp)
+			tfp 	= os.path.dirname(tfp)
+			isDir 	= True
+
+# 解析批处理文件
+def praseConfigBat():
+	log("解析拷贝文件 >>")
+	global userRemoteConfigPath
+	global userRemoteMapPath
+	global batPathParams
+	global batCopyPaths
+	f = open(str.format(r"../../{}", serverBatFileName), "r")
+	for k in f.readlines():
+		infos = k.split(" ")
+		if infos[0] == "@set":
+			kv = infos[1].split("=")
+			if kv[0] == "remote_path" or kv[0] == "remote_map":
+				batPathParams["remote_path"] = userRemoteConfigPath
+				batPathParams["remote_map"] = userRemoteMapPath
+			else:
+				# batPathParams[kv[0]] = kv[1][0:-1]
+				batPathParams[kv[0]] = str.format(r"..\..\{}", kv[1][0:-1])
+		elif infos[0] == "copy":
+			remote = infos[2][1:-1].split("%")
+			remote = str.format("{}{}", batPathParams[remote[1]], remote[2])
+			local  = infos[3][1:-2].split("%")
+			local = str.format("{}{}", batPathParams[local[1]], local[2])
+			remote.replace('/', '\\')
+			if remote not in batCopyPaths:
+				batCopyPaths[remote] = []
+			batCopyPaths[remote].append(local)
+	f.close()
+
 def copyRemoteConfigToServer():
 	global userRemoteConfigPath
 	global userRemoteMapPath
-	global serverBatFileName
-
-	serverBatFilePath = str.format("../../{}", serverBatFileName)
-	if not os.path.isfile(serverBatFilePath):
-		print("-------------------------------------------------------------------")
-		print("-------------------------批处理不存在------------------------------")
-		print("-------------------------------------------------------------------")
-		return
+	global batCopyPaths
+	praseConfigBat()
 	
-	cmd = str.format("cd ../../ & call {} {} {}", serverBatFileName, userRemoteConfigPath, userRemoteMapPath)
-	os.system(cmd)
+	remoteCount = -1
+	remoteFiles = []
+	tryCount = 0
+	while len(remoteFiles) != remoteCount:
+		countfile = open(str.format(r"{}\count.txt", userRemoteConfigPath), 'r')
+		if not countfile:
+			log("拷贝数据记录count.txt文件不可访问")
+			return
+
+		s = countfile.read()
+		countfile.close()
+		info = s.split('\n')
+		remoteCount = int(info[1]) + 1
+		remoteFiles.clear()
+		for d, r, fl in os.walk(userRemoteConfigPath):
+			for f in fl:
+				fp = str.format(r"{}\{}", d, f)
+				remoteFiles.append(fp)
+
+		for d, r, fl in os.walk(userRemoteMapPath):
+			for f in fl:
+				fp = str.format(r"{}\{}", d, f)
+				remoteFiles.append(fp)
+		log("copyRemoteConfigToServer tryCount %d, remoteFilesLen %d, remoteCount %d", tryCount, len(remoteFiles), remoteCount)
+		tryCount = tryCount + 1
+		if tryCount > 30:
+			log("请确认外网是否拷贝完成")
+			return
+		time.sleep(1)
+	log("需要拷贝的文件 %s", remoteFiles)
+	for fp in remoteFiles:
+		fs = getFileCopyPaths(fp)
+		log("Remote File %s Server File %s", fp, fs)
+		for lfs in fs:
+			copyOneFile(fp, lfs)
 
 def main():
 	global userRemoteConfigPath
@@ -365,7 +469,9 @@ def main():
 	global projectDir
 
 	try:
-		print("初始化 ... ")
+		initLogSys()
+		log("初始化 ... ")
+
 		if not initGlobalInfo():
 			return
 
@@ -376,34 +482,34 @@ def main():
 		genRemoteDir(cmod)
 
 		if userRemoteConfigPath == "" or userRemoteMapPath == "" :
-			print("-------------------------------------------------------------------")
-			print("-------------------------远端地址异常------------------------------")
-			print("-------------------------------------------------------------------")
+			log("-------------------------------------------------------------------")
+			log("-------------------------远端地址异常------------------------------")
+			log("-------------------------------------------------------------------")
 			return
 
 		if cmod == '1':
-			print("开始拷贝修改配置 >>> ")
+			log("开始拷贝修改配置 >>> ")
 			processModify()
 		elif cmod == '2':
-			print("开始拷贝全部配置 >>> ")
+			log("开始拷贝全部配置 >>> ")
 			processCopyAll()
 		elif cmod == '3':
-			print("开始拷贝提交配置 >>> ")
+			log("开始拷贝提交配置 >>> ")
 			processCommit()
 		elif cmod == '4':
-			print("开始拷贝配置 >>> ")
+			log("开始拷贝配置 >>> ")
 			copyRemoteConfigToServer()
 		else:
-			print("-------------------------------------------------------------------")
-			print("-----------------------启动参数异常！ 找程序------------------------")
-			print("-------------------------------------------------------------------")
+			log("-------------------------------------------------------------------")
+			log("-----------------------启动参数异常！ 找程序------------------------")
+			log("-------------------------------------------------------------------")
 	except (KeyboardInterrupt,EOFError):
 		pass
 	except Exception as e:
-		print(traceback.format_exc())
-		print("-------------------------------------------------------------------")
-		print("--------------------------执行异常！ 找程序------------------------")
-		print("-------------------------------------------------------------------")
+		log(traceback.format_exc())
+		log("-------------------------------------------------------------------")
+		log("--------------------------执行异常！ 找程序------------------------")
+		log("-------------------------------------------------------------------")
 	finally:
 		os.system("pause")
 
