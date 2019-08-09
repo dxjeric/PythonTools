@@ -79,12 +79,15 @@ def initGlobalInfo():
 	global mapNavmeshCheckPathLen
 	global mapNavmeshFileType
 	global remoteMapRootPath
-	
+
 	config = configparser.ConfigParser()
 	if config.read('config.ini', 'utf8') and config['COMMON']:
 		if config['COMMON']['projectDir']:
 			projectDir = config['COMMON']['projectDir']
-	
+
+		if config['COMMON']['globalUserName']:
+			globalUserName = (config['COMMON']['globalUserName'].lower() == "true")
+
 		if config['CONFIGFILE']['remoteConfigRootPath']:
 			remoteConfigRootPath = config['CONFIGFILE']['remoteConfigRootPath']
 
@@ -456,7 +459,7 @@ def copyRemoteConfigToServer():
 			log("请确认外网是否拷贝完成")
 			return
 		time.sleep(1)
-	log("需要拷贝的文件 %s", remoteFiles)
+
 	for fp in remoteFiles:
 		fs = getFileCopyPaths(fp)
 		log("Remote File %s Server File %s", fp, fs)
@@ -471,7 +474,6 @@ def main():
 	try:
 		initLogSys()
 		log("初始化 ... ")
-
 		if not initGlobalInfo():
 			return
 
