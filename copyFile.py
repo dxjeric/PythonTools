@@ -355,12 +355,16 @@ def checkModifyUser(localToRemote):
 		return
 
 	uncommites = getModifyFiles()
+	untrackedfile = _getUntrackFiles()
 	for lfs in uncommites:
+		untrackedInfo = ""
+		if lfs in untrackedfile:
+			untrackedInfo = "未跟踪文件: "
 		lfs = lfs.replace('/', '\\')
 		if localToRemote.get(lfs):
 			rf = localToRemote[lfs]
 			rk = getRedisKeyByRemotePath(rf)
-			minfo = str.format("{} 修改记录:", lfs)
+			minfo = str.format("{}{} 修改记录:", untrackedInfo, lfs)
 			for k, v in rd.hgetall(rk).items():
 				t = float(v)
 				if curtime < t + deltime:
