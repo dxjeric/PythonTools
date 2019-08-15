@@ -1,39 +1,31 @@
 ## 执行
 
 1. copyFile执行模式说明：
-
     * 1: 拷贝当前修改的文件和新增的配置文件，地图文件
-
     * 2: 拷贝全部配置以及所有地图文件
-
     * 3: 根据输入的提交ID拷贝当前提交的配置文件以及地图文件
 
 2. 执行方式: copyFile.exe modid
 3. **特别说明** 每次执行都会删除远端的文件，然后再拷贝。所以每次拷贝前请先将远端文件拷贝至内网
 
-## python相关
-
+## python exe生成相关
 1. python 3.x版本
-
 2. 安装 pywin32 
-    
-* pip install pywin32
-    
-3.  安装 Pyinstaller
-
+    * pip install pywin32
+3. 安装 Pyinstaller
     * pip install PyInstaller
     * [pyinstaller官网](http://www.pyinstaller.org/)
-
 4. 生成exe
-
     cmd执行 pyinstaller copyFile.py
-    
     记得拷贝config.ini配置文件
 
+## python相关第三方库
+1. redis
+2. hiredis
+3. GitPython
+
 ## 代码
-
 1. copyFile.py **python源码**
-
 2. config.ini  **配置文件 说明如下 **
 
     |        配置项        |               参数值                | 说明                                                         |    section     |

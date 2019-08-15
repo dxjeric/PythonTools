@@ -1,4 +1,8 @@
 language: python
-rvm:
- - 3.6
- - eric
+python:
+ - "3.6"
+ - "3.7"
+ - "2.7"
+
+install:
+  - pip install -r requirements.txt

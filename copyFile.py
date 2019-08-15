@@ -2,8 +2,10 @@
 # encoding: utf8
 ## python 版本3.x
 ## 支持配置 config.ini
-import os, io, shutil, errno, sys, traceback, time, logging
-import configparser
+import os, io, shutil
+import errno, sys, traceback
+import time, logging, json
+import configparser, redis
 from git import Git, Repo, util
 from enum import Enum
 
@@ -43,6 +45,72 @@ class CopyType(Enum):
 	config 		= 1
 	mapJson 	= 2
 	mapNavmesh 	= 3
+
+class MyRedis(object):
+	def __init__(self, host, port, password, db):
+		self.host = host
+		self.port = port
+		self.password = password
+		self.db = db
+		self.handle = False
+		self.valid  = False
+
+	def connect_redis(self):
+		if self.handle:
+			self.handle = False
+
+		self.handle = redis.Redis(host=self.host, port=self.port, db=self.db, password=self.password, encoding='utf8')
+		try:
+			self.handle.ping()
+			self.valid = True
+			return self.isValid()
+		except redis.exceptions.RedisError as e:
+			log("connect_redis error %s", e)
+			log("-------------------------------------------------------------------")
+			log("---------------------- redis连接失败！！！------------------------")
+			log("-------------------------------------------------------------------")
+			self.valid = True
+			return self.isValid()
+
+	def isValid(self):
+		return self.valid
+
+	def get(self, key):
+		if self.isValid():
+			return self.handle.get(key)
+		else:
+			return False
+
+	def set(self, key, value, ex):
+		if self.isValid():
+			return self.handle.set(key, value, ex=ex)
+		else:
+			return False
+
+	def hset(self, name, key, value):
+		if self.isValid():
+			return self.handle.hset(name, key, value)
+		else:
+			return False
+
+	def hget(self, name, key):
+		if self.isValid():
+			return self.handle.hget(name, key)
+		else:
+			return False
+
+	def hgetall(self, name):
+		if self.isValid():
+			return self.handle.hgetall(name)
+		else:
+			return False
+
+	def expire(self, name, time):
+		if self.isValid():
+			return self.handle.expire(name, time)
+		else:
+			return False
+
 
 # 日志打印
 def log(format, *args):
@@ -159,6 +227,10 @@ def _getModifyFiles():
 	fl = []
 	for item in project.tree().diff(None):
 		fl.insert(0, item.a_path)
+		# a = item.a_rawpath.decode('unicode_escape').encode('unicode_escape')
+		# print("a", a, type(a))
+		# # print("1 ", item.a_rawpath.translate(None))
+		# # break
 	return fl
 
 def _getUntrackFiles():
@@ -239,17 +311,74 @@ def writeCopyCountToFile(mod, count):
 	if f:
 		f.write(str.format("{}\n{}", mod, count))
 		f.close()
+# 根据路径获取rediskey
+def getRedisKeyByPath(relativePath):
+	return relativePath.replace('/', '').replace('.', '')
 
+# 记录修改信息
+def recodeModifyInfoToRedis(modifys):
+	curtime = time.time()
+	deltime = 30 * 24 * 3600
+	userName = getUserName()
+	rd = MyRedis("192.168.10.81", 19000, 'nysy', '10')
+	if not rd.connect_redis():
+		return
+
+	for filepath in modifys:
+		redisHkey = getRedisKeyByPath(filepath)
+		if rd.hset(redisHkey, userName, curtime) is False:
+			log("error recodeModifyInfoToRedis hset %s: %s", filepath, userName)
+		if rd.expire(redisHkey, deltime) is False:
+			log("error recodeModifyInfoToRedis expire %s: %d", filepath, deltime)
+
+# 根据远程文件名获取redis key
+def getRedisKeyByRemotePath(remotePath):
+	global userRemoteConfigPath
+	global userRemoteMapPath
+	if remotePath.find(userRemoteConfigPath) >= 0:
+		remotePath = remotePath.replace(userRemoteConfigPath, '')
+	elif remotePath.find(userRemoteMapPath) >= 0:
+		remotePath = remotePath.replace(userRemoteMapPath, '')
+
+	return getRedisKeyByPath(remotePath.replace('\\', '/'))
+
+# 根据秒获取日期
+def getDateInfo(t):
+	return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(t))
+
+# 检测修改者
+def checkModifyUser(localToRemote):
+	curtime = time.time()
+	deltime = 30 * 24 * 3600
+	rd = MyRedis("192.168.10.81", 19000, 'nysy', '10')
+	if not rd.connect_redis():
+		return
+
+	uncommites = getModifyFiles()
+	for lfs in uncommites:
+		lfs = lfs.replace('/', '\\')
+		if localToRemote.get(lfs):
+			rf = localToRemote[lfs]
+			rk = getRedisKeyByRemotePath(rf)
+			minfo = str.format("{} 修改记录:", lfs)
+			for k, v in rd.hgetall(rk).items():
+				t = float(v)
+				if curtime < t + deltime:
+					minfo = str.format("{} {}({});", minfo, k.decode('utf8'), getDateInfo(t))
+			log(minfo)
 
 # 根据文件列表拷贝到对应目录
 def copyFileByList(fl):
 	global userRemoteConfigPath
 	global userRemoteMapPath
-	needCopyFileCount	 = 0
+	needCopyFileCount 	= 0
 	totalCopyFileCount	= 0
+	recodeFiles = []
 	for filePath in fl:
 		filePath = str.format("{}/{}", projectDir, filePath)
 		_copyType, relativePath = checkNeedCopy(filePath)
+		if _copyType != CopyType.invalid:
+			recodeFiles.append(relativePath)
 		remoteFilePath = ""
 		if _copyType == CopyType.config:
 			needCopyFileCount = needCopyFileCount + 1
@@ -262,10 +391,10 @@ def copyFileByList(fl):
 			remoteFilePath = str.format(r"{}/navmeshFile/{}", userRemoteMapPath, relativePath)
 			remoteFilePath = remoteFilePath.replace(".bin", ".bytes")
 
+		log("%s %s", filePath, remoteFilePath)
 		if remoteFilePath != "" and copyOneFile(filePath, remoteFilePath):
 			totalCopyFileCount = totalCopyFileCount + 1
-			
-	
+
 	if totalCopyFileCount != needCopyFileCount:
 		log("-------------------------------------------------------------------")
 		log("----------------------拷贝文件异常！！！！！-----------------------")
@@ -276,6 +405,7 @@ def copyFileByList(fl):
 		log("-------------------------------------------------------------------")
 		log("----------------------------拷贝成功-------------------------------")
 		log("-------------------------------------------------------------------")
+		recodeModifyInfoToRedis(recodeFiles)
 		return True
 
 # 获取修改的文件列表 新增文件列表
@@ -343,6 +473,9 @@ def processCopyAll():
 
 # 根据提交SHA-1找出修改文件
 def getCommitFileBySHA(sha):
+	if len(sha) < 10:
+		return False
+
 	global project
 	try:
 		dl = project.commit(sha).stats.files
@@ -358,12 +491,14 @@ def getCommitFileBySHA(sha):
 # 根据提交文件内容拷贝
 def processCommit():
 	sha = input("请输入提交ID\n提交ID在git log中查看93cc057eb2 或者工具showlog中 SHA-1)\n")
+	# sha = "40d09b7cb2387577a6d05ce56a26e618cdc0b946"
 	fl = False
 	while not fl:
 		fl = getCommitFileBySHA(sha)
 		if not fl:
 			sha = input("请输入正确的提交ID\n")
 
+	log("输入的SHA-1: %s", sha)
 	return copyFileByList(fl)
 # -------------------------------------------------------------------------------------------
 # 从远端拷贝到内网
@@ -411,8 +546,7 @@ def praseConfigBat():
 				batPathParams["remote_path"] = userRemoteConfigPath
 				batPathParams["remote_map"] = userRemoteMapPath
 			else:
-				# batPathParams[kv[0]] = kv[1][0:-1]
-				batPathParams[kv[0]] = str.format(r"..\..\{}", kv[1][0:-1])
+				batPathParams[kv[0]] = str.format(r"{}/{}", projectDir, kv[1][3:-1])
 		elif infos[0] == "copy":
 			remote = infos[2][1:-1].split("%")
 			remote = str.format("{}{}", batPathParams[remote[1]], remote[2])
@@ -423,16 +557,19 @@ def praseConfigBat():
 				batCopyPaths[remote] = []
 			batCopyPaths[remote].append(local)
 	f.close()
+	# log("批处理文件解析结果: %s", batCopyPaths)
 
 def copyRemoteConfigToServer():
 	global userRemoteConfigPath
 	global userRemoteMapPath
 	global batCopyPaths
+	global projectDir
 	praseConfigBat()
 	
 	remoteCount = -1
 	remoteFiles = []
-	tryCount = 0
+	tryCount 	= 0
+	isCopyAll	= False
 	while len(remoteFiles) != remoteCount:
 		countfile = open(str.format(r"{}\count.txt", userRemoteConfigPath), 'r')
 		if not countfile:
@@ -442,12 +579,16 @@ def copyRemoteConfigToServer():
 		s = countfile.read()
 		countfile.close()
 		info = s.split('\n')
-		remoteCount = int(info[1]) + 1
+		remoteCount = int(info[1])
+		if info[0] == 'all':
+			isCopyAll = True
+
 		remoteFiles.clear()
 		for d, r, fl in os.walk(userRemoteConfigPath):
 			for f in fl:
-				fp = str.format(r"{}\{}", d, f)
-				remoteFiles.append(fp)
+				if f != "count.txt":
+					fp = str.format(r"{}\{}", d, f)
+					remoteFiles.append(fp)
 
 		for d, r, fl in os.walk(userRemoteMapPath):
 			for f in fl:
@@ -460,11 +601,21 @@ def copyRemoteConfigToServer():
 			return
 		time.sleep(1)
 
+	localToRemote = {}
+	projectDirReplace = str.format(r"{}/", projectDir)
 	for fp in remoteFiles:
 		fs = getFileCopyPaths(fp)
 		log("Remote File %s Server File %s", fp, fs)
 		for lfs in fs:
-			copyOneFile(fp, lfs)
+			if copyOneFile(fp, lfs):
+				localToRemote[lfs.replace(projectDirReplace, '')] = fp
+
+	log("-------------------------------------------------------------------")
+	log("-----------------------  拷贝结束！！！  ------------------------")
+	log("-------------------------------------------------------------------")
+	if isCopyAll:
+		checkModifyUser(localToRemote)
+
 
 def main():
 	global userRemoteConfigPath
