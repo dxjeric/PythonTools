@@ -25,5 +25,4 @@ def main():
                 print(filepath)
                 shutil.copy(filepath, targetDir + "/" + filename)
 
-
 main()
