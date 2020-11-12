@@ -1,9 +1,11 @@
 import sys,os,io,time, shutil, datetime
 
+exts        = [".gif", ".jpg", ".png", ".mp4", ".bmp"]
 targetDir   = "f:/12121"
 imagePath	= "C:/Users/dangxiaojie/Documents/Tencent Files/3289685120"
 timestr     = "2020-11-12 10:00:00"
-interval    = 60 * 10
+interval    = 60 * 1
+
 
 def processDir(pdir, beginTime, endTime, fileBase, beginIndex):
     for r, d, files in os.walk(pdir):
@@ -12,10 +14,11 @@ def processDir(pdir, beginTime, endTime, fileBase, beginIndex):
             mtime = os.path.getmtime(filepath)
             if mtime >= beginTime and mtime <= endTime :
                 filename = os.path.basename(filepath)
-                ext = os.path.splitext(filename)[-1]
-                print(filepath)
-                shutil.copy(filepath, targetDir + "/" + fileBase + "_" + str(beginIndex) + ext)
-                beginIndex = beginIndex + 1
+                ext = os.path.splitext(filename)[-1].lower()
+                if ext in exts:
+                    print(filepath)
+                    shutil.copy(filepath, targetDir + "/" + fileBase + "_" + str(beginIndex) + ext)
+                    beginIndex = beginIndex + 1
     return beginIndex
 
 def main():
