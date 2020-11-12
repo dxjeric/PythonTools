@@ -2,9 +2,8 @@ import sys,os,io,time, shutil, datetime
 
 targetDir   = "f:/12121"
 imagePath	= "C:/Users/dangxiaojie/Documents/Tencent Files/3289685120"
-# videoPath   = "C:/Users/dangxiaojie/Documents/Tencent Files/3289685120/Video"
-timestr     = "2020-11-05 11:37:38"
-interval    = 60 * 1
+timestr     = "2020-11-12 10:00:00"
+interval    = 60 * 10
 
 def processDir(pdir, beginTime, endTime, fileBase, beginIndex):
     for r, d, files in os.walk(pdir):
