@@ -3,9 +3,9 @@ import sys,os,io,time, shutil, datetime
 exts        = [".gif", ".jpg", ".png", ".mp4", ".bmp"]
 targetDir   = "f:/12121"
 imagePath	= "C:/Users/dangxiaojie/Documents/Tencent Files/3289685120"
-# timestr     = "2020-12-04 17:08:00"
+# timestr     = "2021-01-28 17:08:00"
 timestr     = ""
-interval    = 60 * 2
+interval    = 60 * 5
 
 
 def processDir(pdir, beginTime, endTime, fileBase, beginIndex):
