@@ -5,7 +5,7 @@ targetDir   = "f:/12121"
 imagePath	= "C:/Users/dangxiaojie/Documents/Tencent Files/3289685120"
 # timestr     = "2021-01-28 17:08:00"
 timestr     = ""
-interval    = 60 * 5
+interval    = 60 * 30
 
 
 def processDir(pdir, beginTime, endTime, fileBase, beginIndex):
