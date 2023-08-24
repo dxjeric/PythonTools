@@ -1,14 +1,14 @@
 import sys,os,io,time, shutil, datetime
 
 exts        = [".gif", ".jpg", ".png", ".mp4", ".bmp"]
-targetDir   = "f:/12121"
+targetRoot  = "f:/Pic"
 imagePath	= "C:/Users/dangxiaojie/Documents/Tencent Files/3289685120"
 # timestr     = "2021-01-28 17:08:00"
 timestr     = ""
-interval    = 60 * 30
+interval    = 1
 
 
-def processDir(pdir, beginTime, endTime, fileBase, beginIndex):
+def processDir(pdir, beginTime, endTime, fileBase, beginIndex, targetDir):
     for r, d, files in os.walk(pdir):
         for f in files:
             filepath = r + "/" + f
@@ -24,8 +24,11 @@ def processDir(pdir, beginTime, endTime, fileBase, beginIndex):
 
 def main():
     dt = datetime.datetime.now()
+
     if timestr != "":
         dt = datetime.datetime.strptime(timestr, "%Y-%m-%d %H:%M:%S")
+        
+    targetDir = targetRoot + "/" + dt.strftime("%Y%m%d")
     fileBase = dt.strftime("%Y%m%d_%H%M%S")
     beginTime = dt.timestamp() - interval
     endTime   = dt.timestamp() + interval
@@ -37,7 +40,7 @@ def main():
                 log("create dir erorr! %s", os.strerror(e.errno))
                 return False
 
-    beginIndex = processDir(imagePath, beginTime, endTime, fileBase, 0)
+    beginIndex = processDir(imagePath, beginTime, endTime, fileBase, 0, targetDir)
     print("total: ", beginIndex)
 
 main()
