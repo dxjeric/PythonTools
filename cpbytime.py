@@ -1,19 +1,19 @@
-import sys,os,io,time, shutil, datetime
+import sys,os,io,time, shutil, datetime, string
 
 exts        = [".gif", ".jpg", ".png", ".mp4", ".bmp"]
 targetRoot  = "f:/Pic"
-imagePath	= "C:/Users/dangxiaojie/Documents/Tencent Files/3289685120"
-#timestr     = "2023-11-28 09:55:00"
-interval    = 5*60
-
+imagePath	= "C:/Users/dangxiaojie/Documents/Tencent Files/3289685120/nt_qq/nt_data"
+# timestr     = "2024-01-12 14:30:00"
+interval    = 2*60
+findDirs = ["Pic", "Video"]
 
 def processDir(pdir, beginTime, endTime, fileBase, beginIndex, targetDir):
     for r, d, files in os.walk(pdir):
         for f in files:
             filepath = r + "/" + f
             mtime = os.path.getmtime(filepath)
-#            print("filepath: ", filepath, "mtime: ", mtime)
-#            print("mtime >= beginTime: ", (mtime >= beginTime), "mtime <= endTime: ", (mtime <= endTime))
+            # print("filepath: ", filepath, "mtime: ", mtime)
+            # print("mtime >= beginTime: ", (mtime >= beginTime), "mtime <= endTime: ", (mtime <= endTime))
             if mtime >= beginTime and mtime <= endTime :
                 filename = os.path.basename(filepath)
                 ext = os.path.splitext(filename)[-1].lower()
@@ -30,7 +30,7 @@ def main():
         dt = datetime.datetime.strptime(timestr, "%Y-%m-%d %H:%M:%S")
         
     targetDir = targetRoot + "/" + dt.strftime("%Y%m%d")
-    fileBase = dt.strftime("%Y%m%d_%H%M%S")
+    fileBase = dt.strftime("%Y%m%d%H%M%S")
     beginTime = dt.timestamp() - interval
     endTime   = dt.timestamp() + interval
     print("beginTime: ", beginTime, "endTime: ", endTime)
@@ -42,7 +42,14 @@ def main():
                 log("create dir erorr! %s", os.strerror(e.errno))
                 return False
 
-    beginIndex = processDir(imagePath, beginTime, endTime, fileBase, 0, targetDir)
-    print("total: ", beginIndex)
+    month_st = dt.strftime("%Y-%m")
+    beginIndex = 0
+    for _dir in findDirs:
+        path_dir = imagePath + "/" + _dir + "/" + month_st + "/Ori"
+        print("path_dir", path_dir)
+        beginIndex = processDir(path_dir, beginTime, endTime, fileBase, beginIndex, targetDir)
+
+    print("total: ", beginIndex)        
+    os.system("explorer.exe %s" % targetDir.replace("/", "\\"))
 
 main()
