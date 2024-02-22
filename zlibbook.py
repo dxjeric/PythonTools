@@ -7,7 +7,7 @@ def main():
     dirPath = str(sys.argv[1])    
     all_books = []
 
-    maxZipFileSize = 1
+    maxZipFileSize = -1
     if 'MAX_ZIP_FILE_SIZE' in globals().keys():
         maxZipFileSize = MAX_ZIP_FILE_SIZE
     
@@ -28,9 +28,12 @@ def main():
     while bookIndex < len(all_books):
         partIndex += 1
         totalSize = 0
-        zipFile = zipfile.ZipFile(r'{}.part{:0>2d}.zip'.format(zipBase, partIndex), 'w')
+        zipfillename = r'{}.part{:0>2d}.zip'.format(zipBase, partIndex)
+        if maxZipFileSize == -1 : 
+            zipfillename = r'{}.zip'.format(zipBase)
+        zipFile = zipfile.ZipFile(zipfillename, 'w')
         curZipFileCount = 0
-        while bookIndex < len(all_books) and totalSize < maxZipFileSize:
+        while bookIndex < len(all_books) and (maxZipFileSize == -1 or totalSize < maxZipFileSize):
             totalFileCount += 1
             curZipFileCount += 1
             fp = all_books[bookIndex]
