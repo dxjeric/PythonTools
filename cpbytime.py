@@ -4,7 +4,7 @@ exts        = [".gif", ".jpg", ".png", ".mp4", ".bmp"]
 targetRoot  = "f:/Pic"
 imagePath	= "C:/Users/dangxiaojie/Documents/Tencent Files/3289685120/nt_qq/nt_data"
 # timestr     = "2024-01-12 14:30:00"
-interval    = 60*60
+interval    = 5*60
 findDirs = ["Pic", "Video"]
 
 def processDir(pdir, beginTime, endTime, fileBase, beginIndex, targetDir):

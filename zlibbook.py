@@ -1,6 +1,13 @@
-import sys,os,io,time, shutil, datetime, string, zipfile
+import sys, os, hashlib, zipfile
 
-MAX_ZIP_FILE_SIZE = 1024 * 1024 * 1024 * 20
+MAX_ZIP_FILE_SIZE = 1024 * 1024
+
+def getFileMd5Str(file_path):
+    with open(file_path, "rb") as f:
+        md5obj = hashlib.md5()
+        md5obj.update(f.read())
+        md5str = md5obj.hexdigest()
+        return str(md5str).upper()
 
 def main():
     print("sys.argv: ", len(sys.argv), str(sys.argv[0]))
@@ -25,12 +32,14 @@ def main():
     partIndex = 0
     bookIndex = 0
     totalFileCount = 0
+    allZipFileNames = []
     while bookIndex < len(all_books):
         partIndex += 1
         totalSize = 0
         zipfillename = r'{}.part{:0>2d}.zip'.format(zipBase, partIndex)
         if maxZipFileSize == -1 : 
             zipfillename = r'{}.zip'.format(zipBase)
+        allZipFileNames.append(zipfillename)
         zipFile = zipfile.ZipFile(zipfillename, 'w')
         curZipFileCount = 0
         while bookIndex < len(all_books) and (maxZipFileSize == -1 or totalSize < maxZipFileSize):
@@ -41,12 +50,13 @@ def main():
             stats = os.stat(fp)
             totalSize += stats.st_size
             zipFile.write(fp, fp, zipfile.ZIP_DEFLATED)
-        logfile.write("index: {}, zip file: {}, total: {}\n".format(partIndex, curZipFileCount, totalFileCount))
+        logfile.write("file name: {},  zip file: {}, total: {}\n".format(zipfillename, curZipFileCount, totalFileCount))
         print("curZipFileCount:", curZipFileCount, "totalFileCount:", totalFileCount, "totalSize:", totalSize, "maxZipFileSize:", maxZipFileSize)
         zipFile.close()
-    
-    print("finsh totalFileCount: ", totalFileCount)
+    logfile.write("\n\n")
     logfile.close()
+    os.system("md5sum {}.part0*.zip >> {}.txt".format(zipBase, zipBase))
+    print("finsh totalFileCount: ", totalFileCount)    
 
 if __name__ == "__main__":
 	main()    
