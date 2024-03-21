@@ -1,13 +1,7 @@
-import sys, os, hashlib, zipfile
+import sys, os, zipfile
 
 MAX_ZIP_FILE_SIZE = 1024 * 1024
-
-def getFileMd5Str(file_path):
-    with open(file_path, "rb") as f:
-        md5obj = hashlib.md5()
-        md5obj.update(f.read())
-        md5str = md5obj.hexdigest()
-        return str(md5str).upper()
+RM_AFTER_ZIP = False
 
 def main():
     print("sys.argv: ", len(sys.argv), str(sys.argv[0]))
@@ -46,10 +40,12 @@ def main():
             totalFileCount += 1
             curZipFileCount += 1
             fp = all_books[bookIndex]
-            bookIndex += 1            
+            bookIndex += 1
             stats = os.stat(fp)
             totalSize += stats.st_size
             zipFile.write(fp, fp, zipfile.ZIP_DEFLATED)
+            if RM_AFTER_ZIP:
+                os.remove(fp) # 删除文件
         logfile.write("file name: {},  zip file: {}, total: {}\n".format(zipfillename, curZipFileCount, totalFileCount))
         print("curZipFileCount:", curZipFileCount, "totalFileCount:", totalFileCount, "totalSize:", totalSize, "maxZipFileSize:", maxZipFileSize)
         zipFile.close()
