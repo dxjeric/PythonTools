@@ -3,13 +3,16 @@ import sys,os,io,time, shutil, datetime, string
 exts        = [".gif", ".jpg", ".png", ".mp4", ".bmp"]
 targetRoot  = "f:/Pic"
 imagePath	= "C:/Users/dangxiaojie/Documents/Tencent Files/3289685120/nt_qq/nt_data"
-# timestr     = "2024-01-12 14:30:00"
-interval    = 5*60
+timestr     = "2024-04-01 14:12:00"
+interval    = 15*60
 findDirs = ["Pic", "Video"]
 
-def processDir(pdir, beginTime, endTime, fileBase, beginIndex, targetDir):
+def processDir(pdir, beginTime, endTime, fileBase, beginIndex, targetDir):    
     for r, d, files in os.walk(pdir):
-        for f in files:
+        # print("r", os.path.basename(r))
+        if os.path.basename(r) != "Ori":
+            continue
+        for f in files:            
             filepath = r + "/" + f
             mtime = os.path.getmtime(filepath)
             # print("filepath: ", filepath, "mtime: ", mtime)
@@ -43,10 +46,10 @@ def main():
                 log("create dir erorr! %s", os.strerror(e.errno))
                 return False
 
-    month_st = dt.strftime("%Y-%m")
+    # month_st = dt.strftime("%Y-%m")
     beginIndex = 0
     for _dir in findDirs:
-        path_dir = imagePath + "/" + _dir + "/" + month_st + "/Ori"
+        path_dir = imagePath + "/" + _dir
         print("path_dir", path_dir)
         beginIndex = processDir(path_dir, beginTime, endTime, fileBase, beginIndex, targetDir)
 
