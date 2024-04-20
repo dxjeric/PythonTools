@@ -3,8 +3,8 @@ import sys, os, io, time, shutil, datetime, string
 exts = [".gif", ".jpg", ".png", ".mp4", ".bmp"]
 targetRoot = "f:/Pic"
 imagePath = "C:/Users/dangxiaojie/Documents/Tencent Files/3289685120/nt_qq/nt_data"
-timestr = "2024-04-01 14:12:00"
-interval = 15 * 60
+# timestr = "2024-04-01 14:12:00"
+interval = 5 * 60
 findDirs = ["Pic", "Video"]
 
 

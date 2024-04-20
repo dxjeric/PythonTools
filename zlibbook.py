@@ -1,6 +1,6 @@
 import sys, os, zipfile, time
 
-MAX_ZIP_FILE_SIZE = 1024 * 1024
+MAX_ZIP_FILE_SIZE = 1024 * 1024 * 1024 * 20
 RM_AFTER_ZIP = False
 
 
@@ -16,14 +16,16 @@ def main():
     if dirPath[-1] == '/':
         dirPath = dirPath[0:-1]
 
-    for r, _, files in os.walk(dirPath):
+    os.system("mv {} ./".format(dirPath))
+    zipBase = os.path.basename(dirPath)
+    for r, _, files in os.walk(zipBase):
         for f in files:
             all_books.append(r + "/" + f)
 
     # print("all_books: ", all_books, "len(all_books)", len(all_books))
     print("dirPath", dirPath, "maxZipFileSize", maxZipFileSize,
           "all_books count: ", len(all_books))
-    zipBase = os.path.basename(dirPath)
+    # zipBase = os.path.basename(dirPath)
     logfile = open(zipBase + ".txt", "w")
     partIndex = 0
     bookIndex = 0
