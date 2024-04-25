@@ -37,7 +37,7 @@ def main():
     if 'timestr' in globals().keys():
         dt = datetime.datetime.strptime(timestr, "%Y-%m-%d %H:%M:%S")
 
-    targetDir = targetRoot + "/" + dt.strftime("%Y%m%d")
+    targetDir = targetRoot + "/" + dt.strftime("%Y%m")
     fileBase = dt.strftime("%Y%m%d%H%M%S")
     beginTime = dt.timestamp() - interval
     endTime = dt.timestamp() + interval
