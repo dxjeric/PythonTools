@@ -32,7 +32,7 @@ def main():
         20: "北",
         21: "中"
     }
-    all_cards = [[1036]]
+    all_cards = [[777]]
     for cards in all_cards:
         card_str = ""
         for seq in cards:

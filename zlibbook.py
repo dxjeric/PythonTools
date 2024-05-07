@@ -18,20 +18,17 @@ def main():
 
     os.system("mv {} ./".format(dirPath))
     zipBase = os.path.basename(dirPath)
+    print("dirPath", dirPath, "maxZipFileSize", maxZipFileSize)
     for r, _, files in os.walk(zipBase):
         for f in files:
             all_books.append(r + "/" + f)
 
-    # print("all_books: ", all_books, "len(all_books)", len(all_books))
-    print("dirPath", dirPath, "maxZipFileSize", maxZipFileSize,
-          "all_books count: ", len(all_books))
-    # zipBase = os.path.basename(dirPath)
+    print("len(all_books)", len(all_books), "begin", time.time())
     logfile = open(zipBase + ".txt", "w")
     partIndex = 0
     bookIndex = 0
     totalFileCount = 0
     allZipFileNames = []
-    begin_time = time.time() * 1000
     while bookIndex < len(all_books):
         partIndex += 1
         totalSize = 0
@@ -53,17 +50,18 @@ def main():
             if RM_AFTER_ZIP:
                 os.remove(fp)  # 删除文件
         zipFile.close()
-        cur_time = time.time() * 1000
-        log_str = "zipfillename: {},  curZipFileCount: {}, totalFileCount: {}, spendTime: {}".format(
-            zipfillename, curZipFileCount, totalFileCount,
-            int(cur_time - begin_time))
+        log_str = "zipfillename: {},  curZipFileCount: {}, totalFileCount: {}".format(
+            zipfillename, curZipFileCount, totalFileCount)
         logfile.write(log_str)
         print(log_str)
-        begin_time = cur_time
+
     logfile.write("\n\n")
     logfile.close()
+    print("zip ok! begin md5sum!", "time: ", time.time())
     os.system("md5sum {}.part0*.zip >> {}.txt".format(zipBase, zipBase))
-    print("finsh totalFileCount: ", totalFileCount)
+    os.system("echo zip md5sum finish! >> {}.txt".format(zipBase))
+    os.system("rm -fr {}".format(zipBase))
+    print("finsh totalFileCount: ", totalFileCount, "end", time.time())
 
 
 if __name__ == "__main__":
