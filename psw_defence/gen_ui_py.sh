@@ -1,0 +1,1 @@
+pyuic5 psw_defence.ui -o psw_defence_GUI.py
