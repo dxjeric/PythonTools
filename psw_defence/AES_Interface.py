@@ -1,4 +1,4 @@
-import base64
+import base64, traceback, logging
 from Crypto.Cipher import AES
 
 AES_BLOCK_SIZE = AES.block_size
@@ -26,31 +26,46 @@ def AES_PadKey(aes_key: str):
 
 # 加密
 def AES_EnCrypt(aes_key: str, val: str):
-    byte_key = AES_PadKey(aes_key)
-    aes_cipher = AES.new(byte_key, AES.MODE_ECB)
-    ase_val = AES_PadValue(val)
-    out_val_text = base64.b64encode(aes_cipher.encrypt(ase_val))
-    return out_val_text.decode()
+    try:
+        byte_key = AES_PadKey(aes_key)
+        aes_cipher = AES.new(byte_key, AES.MODE_ECB)
+        ase_val = AES_PadValue(val)
+        out_val_text = base64.b64encode(aes_cipher.encrypt(ase_val))
+        return True, out_val_text.decode()
+    except Exception as e:
+        logging.exception(e)
+        return False, ""
 
 
 # 解密
 def AES_DeCrypt(aes_key: str, ase_val: str):
-    byte_key = AES_PadKey(aes_key)
-    aes_cipher = AES.new(byte_key, AES.MODE_ECB)
-    ase_val = ase_val.encode()
-    ase_val_byte = base64.b64decode(ase_val)
-    out_src_val = aes_cipher.decrypt(ase_val_byte)
-    return out_src_val.decode()
+    try:
+        byte_key = AES_PadKey(aes_key)
+        aes_cipher = AES.new(byte_key, AES.MODE_ECB)
+        ase_val = ase_val.encode()
+        ase_val_byte = base64.b64decode(ase_val)
+        out_src_val = aes_cipher.decrypt(ase_val_byte)
+        return True, out_src_val.decode()
+    except Exception as e:
+        logging.exception(e)
+        return False, ""
 
 
 # 测试
 def test():
+    logging.basicConfig(
+        level=logging.INFO,
+        filename="demo.log",
+        filemode="w",
+        format=
+        "[%(asctime)s] [%(levelname)s] %(message)s - %(filename)s:%(lineno)s",
+        datefmt="%Y-%m-%d %H:%M:%S")
     aes_key = "hello world!"
     aes_val = "hi every body!"
 
-    encrypt_val = AES_EnCrypt(aes_key, aes_val)
-    decrypt_val = AES_DeCrypt(aes_key, encrypt_val)
-    print("encrypt_val: ", encrypt_val)
+    ok, encrypt_val = AES_EnCrypt(aes_key, aes_val)
+    ok, decrypt_val = AES_DeCrypt(aes_key, encrypt_val)
+    print("encrypt_val: {}".format(encrypt_val))
     print("decrypt_val: ", decrypt_val)
 
 
