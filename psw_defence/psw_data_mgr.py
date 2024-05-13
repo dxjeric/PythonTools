@@ -26,7 +26,6 @@ class PassWordRandom():
             for one in self.Others:
                 _all_chars.append(one)
 
-        print("_all_chars", _all_chars)
         all_chars_size = len(_all_chars)
         new_ps_str = ""
         for _ in range(psw_len):
