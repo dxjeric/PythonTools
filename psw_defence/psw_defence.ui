@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>548</width>
-    <height>578</height>
+    <width>547</width>
+    <height>593</height>
    </rect>
   </property>
   <property name="font">
@@ -39,9 +39,9 @@
     <property name="geometry">
      <rect>
       <x>9</x>
-      <y>9</y>
+      <y>20</y>
       <width>531</width>
-      <height>92</height>
+      <height>111</height>
      </rect>
     </property>
     <property name="font">
@@ -56,104 +56,129 @@
     <property name="title">
      <string>配置</string>
     </property>
-    <layout class="QGridLayout" name="gridLayout_2">
-     <item row="0" column="0">
-      <widget class="QLabel" name="Label_pw">
-       <property name="font">
-        <font>
-         <family>新宋体</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>加密秘钥</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="LineEditPassWord">
-       <property name="font">
-        <font>
-         <family>Consolas</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="acceptDrops">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string/>
-       </property>
-       <property name="echoMode">
-        <enum>QLineEdit::Password</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QRadioButton" name="RadioButton_ShowPW">
-       <property name="font">
-        <font>
-         <family>新宋体</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>显示密码</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="Lable_PWFile">
-       <property name="font">
-        <font>
-         <family>新宋体</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>密码文件</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="LineEdit_PWFile">
-       <property name="font">
-        <font>
-         <family>Consolas</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="acceptDrops">
-        <bool>true</bool>
-       </property>
-       <property name="toolTip">
-        <string/>
-       </property>
-       <property name="echoMode">
-        <enum>QLineEdit::Password</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QPushButton" name="PushButton_SelPWFile">
-       <property name="font">
-        <font>
-         <family>新宋体</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>选择...</string>
-       </property>
-       <property name="checkable">
-        <bool>false</bool>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QLabel" name="Label_pw">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>64</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>新宋体</family>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>加密秘钥</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="LineEditPassWord">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>26</y>
+       <width>341</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Consolas</family>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="acceptDrops">
+      <bool>false</bool>
+     </property>
+     <property name="toolTip">
+      <string/>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::Password</enum>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="RadioButton_ShowPW">
+     <property name="geometry">
+      <rect>
+       <x>434</x>
+       <y>28</y>
+       <width>87</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>新宋体</family>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>显示密码</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="Lable_PWFile">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>69</y>
+       <width>64</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>新宋体</family>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>密码文件</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="PushButton_SelPWFile">
+     <property name="geometry">
+      <rect>
+       <x>434</x>
+       <y>65</y>
+       <width>75</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>新宋体</family>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>选择...</string>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
+     <property name="autoDefault">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="TextEdit_PWFile">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>57</y>
+       <width>341</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAsNeeded</enum>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="GroupBox_New">
     <property name="enabled">
@@ -162,7 +187,7 @@
     <property name="geometry">
      <rect>
       <x>9</x>
-      <y>106</y>
+      <y>140</y>
       <width>531</width>
       <height>211</height>
      </rect>
@@ -179,200 +204,276 @@
     <property name="title">
      <string>添加</string>
     </property>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
-      <widget class="QLabel" name="Label_Addr">
-       <property name="font">
-        <font>
-         <family>新宋体</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>地址</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="LineEdit_Addr_New">
-       <property name="font">
-        <font>
-         <family>Consolas</family>
-         <pointsize>13</pointsize>
-        </font>
-       </property>
-       <property name="acceptDrops">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string/>
-       </property>
-       <property name="echoMode">
-        <enum>QLineEdit::Password</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QCheckBox" name="CheckBox_Num">
-       <property name="text">
-        <string>数字</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="Label_Account">
-       <property name="font">
-        <font>
-         <family>新宋体</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>账号</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="LineEdit_Account_New">
-       <property name="font">
-        <font>
-         <family>Consolas</family>
-         <pointsize>13</pointsize>
-        </font>
-       </property>
-       <property name="acceptDrops">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string/>
-       </property>
-       <property name="echoMode">
-        <enum>QLineEdit::Password</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QCheckBox" name="CheckBox_Char">
-       <property name="text">
-        <string>字母</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="Label_PW">
-       <property name="font">
-        <font>
-         <family>新宋体</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>密码</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QLineEdit" name="LineEdit_PassWord_New">
-       <property name="font">
-        <font>
-         <family>Consolas</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="acceptDrops">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string/>
-       </property>
-       <property name="echoMode">
-        <enum>QLineEdit::Password</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="2">
-      <widget class="QCheckBox" name="CheckBox_Other">
-       <property name="text">
-        <string>字符</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1" rowspan="3">
-      <widget class="QTextEdit" name="TextEdit_Other">
-       <property name="acceptDrops">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="2">
-      <widget class="QPushButton" name="PushButton_Random_New">
-       <property name="font">
-        <font>
-         <family>新宋体</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>随机密码</string>
-       </property>
-       <property name="checkable">
-        <bool>false</bool>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="Label_PW_2">
-       <property name="font">
-        <font>
-         <family>新宋体</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>备注</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="2">
-      <widget class="QPushButton" name="PushButton_Save_New">
-       <property name="font">
-        <font>
-         <family>新宋体</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>存储</string>
-       </property>
-       <property name="checkable">
-        <bool>false</bool>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QLabel" name="Label_Addr">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>29</y>
+       <width>32</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>新宋体</family>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>地址</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="LineEdit_Addr_New">
+     <property name="geometry">
+      <rect>
+       <x>48</x>
+       <y>26</y>
+       <width>371</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Consolas</family>
+       <pointsize>13</pointsize>
+      </font>
+     </property>
+     <property name="acceptDrops">
+      <bool>false</bool>
+     </property>
+     <property name="toolTip">
+      <string/>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::Password</enum>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="CheckBox_Num">
+     <property name="geometry">
+      <rect>
+       <x>440</x>
+       <y>29</y>
+       <width>55</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>数字</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="Label_Account">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>61</y>
+       <width>32</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>新宋体</family>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>账号</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="LineEdit_Account_New">
+     <property name="geometry">
+      <rect>
+       <x>48</x>
+       <y>58</y>
+       <width>371</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Consolas</family>
+       <pointsize>13</pointsize>
+      </font>
+     </property>
+     <property name="acceptDrops">
+      <bool>false</bool>
+     </property>
+     <property name="toolTip">
+      <string/>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::Password</enum>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="CheckBox_Char">
+     <property name="geometry">
+      <rect>
+       <x>440</x>
+       <y>61</y>
+       <width>55</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>字母</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="Label_PW">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>93</y>
+       <width>32</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>新宋体</family>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>密码</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="LineEdit_PassWord_New">
+     <property name="geometry">
+      <rect>
+       <x>48</x>
+       <y>90</y>
+       <width>371</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Consolas</family>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="acceptDrops">
+      <bool>false</bool>
+     </property>
+     <property name="toolTip">
+      <string/>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::Password</enum>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="CheckBox_Other">
+     <property name="geometry">
+      <rect>
+       <x>440</x>
+       <y>92</y>
+       <width>55</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>字符</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QTextEdit" name="TextEdit_Other">
+     <property name="geometry">
+      <rect>
+       <x>48</x>
+       <y>121</y>
+       <width>371</width>
+       <height>80</height>
+      </rect>
+     </property>
+     <property name="acceptDrops">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="PushButton_Random_New">
+     <property name="geometry">
+      <rect>
+       <x>440</x>
+       <y>130</y>
+       <width>75</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>新宋体</family>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>随机密码</string>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
+     <property name="autoDefault">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="Label_PW_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>152</y>
+       <width>32</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>新宋体</family>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>备注</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="PushButton_Save_New">
+     <property name="geometry">
+      <rect>
+       <x>440</x>
+       <y>170</y>
+       <width>75</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>新宋体</family>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>存储</string>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
+     <property name="autoDefault">
+      <bool>false</bool>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="GroupBox_New_2">
     <property name="geometry">
      <rect>
       <x>9</x>
-      <y>324</y>
+      <y>360</y>
       <width>531</width>
-      <height>231</height>
+      <height>211</height>
      </rect>
     </property>
     <property name="font">
@@ -384,111 +485,151 @@
     <property name="title">
      <string>查询</string>
     </property>
-    <layout class="QGridLayout" name="gridLayout_3">
-     <item row="0" column="0">
-      <widget class="QLabel" name="Label_Addr_2">
-       <property name="font">
-        <font>
-         <family>新宋体</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>地址</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLineEdit" name="LineEdit_Addr_New_2">
-       <property name="font">
-        <font>
-         <family>Consolas</family>
-         <pointsize>13</pointsize>
-        </font>
-       </property>
-       <property name="acceptDrops">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string/>
-       </property>
-       <property name="echoMode">
-        <enum>QLineEdit::Password</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="Label_Account_2">
-       <property name="font">
-        <font>
-         <family>新宋体</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>账号</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="LineEdit_Account_New_2">
-       <property name="font">
-        <font>
-         <family>Consolas</family>
-         <pointsize>13</pointsize>
-        </font>
-       </property>
-       <property name="acceptDrops">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string/>
-       </property>
-       <property name="echoMode">
-        <enum>QLineEdit::Password</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="Label_Account_3">
-       <property name="font">
-        <font>
-         <family>新宋体</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>结果</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1" rowspan="2">
-      <widget class="QTextBrowser" name="textBrowser">
-       <property name="acceptDrops">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="2">
-      <widget class="QPushButton" name="PushButton_Save_New_2">
-       <property name="font">
-        <font>
-         <family>新宋体</family>
-         <pointsize>12</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>查询</string>
-       </property>
-       <property name="checkable">
-        <bool>false</bool>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QLabel" name="Label_Addr_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>32</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>新宋体</family>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>地址</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="LineEdit_Addr_New_2">
+     <property name="geometry">
+      <rect>
+       <x>48</x>
+       <y>26</y>
+       <width>371</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Consolas</family>
+       <pointsize>13</pointsize>
+      </font>
+     </property>
+     <property name="acceptDrops">
+      <bool>false</bool>
+     </property>
+     <property name="toolTip">
+      <string/>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::Password</enum>
+     </property>
+    </widget>
+    <widget class="QLabel" name="Label_Account_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>62</y>
+       <width>32</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>新宋体</family>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>账号</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="LineEdit_Account_New_2">
+     <property name="geometry">
+      <rect>
+       <x>48</x>
+       <y>58</y>
+       <width>371</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Consolas</family>
+       <pointsize>13</pointsize>
+      </font>
+     </property>
+     <property name="acceptDrops">
+      <bool>false</bool>
+     </property>
+     <property name="toolTip">
+      <string/>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::Password</enum>
+     </property>
+    </widget>
+    <widget class="QLabel" name="Label_Account_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>137</y>
+       <width>32</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>新宋体</family>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>结果</string>
+     </property>
+    </widget>
+    <widget class="QTextBrowser" name="textBrowser">
+     <property name="geometry">
+      <rect>
+       <x>48</x>
+       <y>90</y>
+       <width>371</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <property name="acceptDrops">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="PushButton_Save_New_2">
+     <property name="geometry">
+      <rect>
+       <x>440</x>
+       <y>60</y>
+       <width>75</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>新宋体</family>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>查询</string>
+     </property>
+     <property name="checkable">
+      <bool>false</bool>
+     </property>
+     <property name="autoDefault">
+      <bool>false</bool>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

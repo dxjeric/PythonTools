@@ -9,6 +9,7 @@ class QT_MainWindow(QMainWindow, Ui_mainWindow):
     def __init__(self, parent=None):
         super(QT_MainWindow, self).__init__(parent)
         self.setupUi(self)
+        self.setFixedSize(self.width(), self.height())
 
 
 app = QtWidgets.QApplication(sys.argv)
