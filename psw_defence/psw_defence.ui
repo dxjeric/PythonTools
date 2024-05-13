@@ -245,7 +245,7 @@
       <string/>
      </property>
      <property name="echoMode">
-      <enum>QLineEdit::Password</enum>
+      <enum>QLineEdit::Normal</enum>
      </property>
     </widget>
     <widget class="QCheckBox" name="CheckBox_Num">
@@ -305,7 +305,7 @@
       <string/>
      </property>
      <property name="echoMode">
-      <enum>QLineEdit::Password</enum>
+      <enum>QLineEdit::Normal</enum>
      </property>
     </widget>
     <widget class="QLabel" name="Label_PW">
@@ -349,7 +349,7 @@
       <string/>
      </property>
      <property name="echoMode">
-      <enum>QLineEdit::Password</enum>
+      <enum>QLineEdit::Normal</enum>
      </property>
     </widget>
     <widget class="QCheckBox" name="CheckBox_Other">
@@ -493,7 +493,7 @@
      </property>
     </widget>
    </widget>
-   <widget class="QGroupBox" name="GroupBox_New_2">
+   <widget class="QGroupBox" name="GroupBox_New_Q">
     <property name="geometry">
      <rect>
       <x>9</x>
@@ -511,7 +511,7 @@
     <property name="title">
      <string>查询</string>
     </property>
-    <widget class="QLabel" name="Label_Addr_2">
+    <widget class="QLabel" name="Label_Addr_Q">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -530,7 +530,7 @@
       <string>地址</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="LineEdit_Addr_New_2">
+    <widget class="QLineEdit" name="LineEdit_Addr_Q">
      <property name="geometry">
       <rect>
        <x>48</x>
@@ -552,10 +552,10 @@
       <string/>
      </property>
      <property name="echoMode">
-      <enum>QLineEdit::Password</enum>
+      <enum>QLineEdit::Normal</enum>
      </property>
     </widget>
-    <widget class="QLabel" name="Label_Account_2">
+    <widget class="QLabel" name="Label_Account_Q">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -574,7 +574,7 @@
       <string>账号</string>
      </property>
     </widget>
-    <widget class="QLineEdit" name="LineEdit_Account_New_2">
+    <widget class="QLineEdit" name="LineEdit_Account_Q">
      <property name="geometry">
       <rect>
        <x>48</x>
@@ -596,10 +596,10 @@
       <string/>
      </property>
      <property name="echoMode">
-      <enum>QLineEdit::Password</enum>
+      <enum>QLineEdit::Normal</enum>
      </property>
     </widget>
-    <widget class="QLabel" name="Label_Account_3">
+    <widget class="QLabel" name="Label_Account_R">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -618,7 +618,7 @@
       <string>结果</string>
      </property>
     </widget>
-    <widget class="QTextBrowser" name="textBrowser">
+    <widget class="QTextBrowser" name="TextBrowser_Result_Q">
      <property name="geometry">
       <rect>
        <x>48</x>
@@ -631,7 +631,7 @@
       <bool>false</bool>
      </property>
     </widget>
-    <widget class="QPushButton" name="PushButton_Save_New_2">
+    <widget class="QPushButton" name="PushButton_Query_Q">
      <property name="geometry">
       <rect>
        <x>440</x>
@@ -658,7 +658,11 @@
     </widget>
    </widget>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QStatusBar" name="statusbar">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>
