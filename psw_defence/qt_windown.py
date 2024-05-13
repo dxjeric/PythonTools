@@ -16,11 +16,14 @@ class QT_MainWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         self.PushButton_SelPWFile.clicked.connect(self.selectEcryptFile)
 
     def selectEcryptFile(self):
-        msg_box = QtWidgets.QMessageBox(self)
-        msg_box.setText("就是这个!")
-        msg_box.setWindowTitle("密码盾")
-        msg_box.setStyleSheet("QLabel{min-width: 150px;min-height: 50px;}")
-        msg_box.show()
+        fileDialog = QtWidgets.QFileDialog.getOpenFileName(
+            self, "选择文件", "./", "All File(*);;EnCrypt File(*.ecdb)")
+        self.TextEdit_PWFile.setText(fileDialog[0])
+        # msg_box = QtWidgets.QMessageBox(self)
+        # msg_box.setText("就是这个!")
+        # msg_box.setWindowTitle("密码盾")
+        # msg_box.setStyleSheet("QLabel{min-width: 150px;min-height: 50px;}")
+        # msg_box.show()
 
 
 app = QtWidgets.QApplication(sys.argv)
