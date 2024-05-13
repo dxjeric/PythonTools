@@ -41,6 +41,9 @@
         <pointsize>12</pointsize>
        </font>
       </property>
+      <property name="acceptDrops">
+       <bool>true</bool>
+      </property>
       <property name="title">
        <string>配置</string>
       </property>
@@ -65,6 +68,9 @@
            <family>Consolas</family>
            <pointsize>12</pointsize>
           </font>
+         </property>
+         <property name="acceptDrops">
+          <bool>false</bool>
          </property>
          <property name="toolTip">
           <string/>
@@ -107,6 +113,9 @@
            <family>Consolas</family>
            <pointsize>12</pointsize>
           </font>
+         </property>
+         <property name="acceptDrops">
+          <bool>true</bool>
          </property>
          <property name="toolTip">
           <string/>
@@ -309,7 +318,11 @@
         </widget>
        </item>
        <item row="4" column="1" rowspan="2">
-        <widget class="QTextEdit" name="TextEdit_Other"/>
+        <widget class="QTextEdit" name="TextEdit_Other">
+         <property name="acceptDrops">
+          <bool>false</bool>
+         </property>
+        </widget>
        </item>
        <item row="5" column="2">
         <widget class="QPushButton" name="PushButton_Save_New">
@@ -348,7 +361,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>26</y>
+         <y>30</y>
          <width>32</width>
          <height>16</height>
         </rect>
@@ -405,7 +418,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>58</y>
+         <y>62</y>
          <width>32</width>
          <height>16</height>
         </rect>

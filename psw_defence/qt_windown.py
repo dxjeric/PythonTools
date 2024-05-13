@@ -1,7 +1,7 @@
 import sys
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
-from psw_defence import Ui_mainWindow
+from psw_defence_GUI import Ui_mainWindow
 
 
 class QT_MainWindow(QMainWindow, Ui_mainWindow):
