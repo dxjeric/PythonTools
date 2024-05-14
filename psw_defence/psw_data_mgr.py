@@ -1,4 +1,4 @@
-import random, time
+import random, time, os, hashlib, json
 
 
 # 密码随机
@@ -54,9 +54,40 @@ class EnCryptData():
         self.rsa_private_key = ""  # 这里为密文
         self.encrypte_json = None  # json数据
 
+    def loadEnCrypteFile(file_path=""):
+        if file_path == "":
+            return False, "请选择数据文件!"
+
+        if os.path.isfile(file_path):
+            return False, "错误的文件路径, 请重新选择!"
+
+    def checkMd5():
+        return True
+
 
 # 测试
 def test():
+    # md5 = hashlib.md5()
+    # md5.update("1".encode())
+    # md5_str = md5.hexdigest()
+    # print("1: ", md5.hexdigest())
+    # f = open("./test.ecdb", "wb")
+    # if f:
+    #     f.seek(32)
+    #     f.write("1".encode())
+    #     f.seek(0)
+    #     f.write(md5_str.encode())
+    #     f.close()
+
+    # f = open("./test.ecdb", "rb")
+    # if f:
+    #     md5_str = f.read(32)
+    #     data_str = f.read()
+    #     md5.update(data_str)
+    #     print("md5_str: ", md5_str.decode())
+    #     print("md5.hexdigest(): ", md5.hexdigest())
+    #     f.close()
+
     pwr = PassWordRandom()
     print(pwr.randomPassword(8, True, True))
     print(pwr.randomPassword(8, True, False))

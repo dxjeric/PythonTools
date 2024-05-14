@@ -1,5 +1,6 @@
 import base64, traceback, logging
 from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
 
 AES_BLOCK_SIZE = AES.block_size
 AES_KEY_SIZE = 16
@@ -8,20 +9,13 @@ AES_KEY_SIZE = 16
 # 补足到定长数据
 def AES_PadValue(val: str):
     byte_val = val.encode()
-    while len(byte_val) % AES_KEY_SIZE != 0:
-        byte_val += ' '.encode()
-    return byte_val
+    return pad(byte_val, AES_BLOCK_SIZE)
 
 
 # 获取制定长度的秘钥
 def AES_PadKey(aes_key: str):
     byte_key = aes_key.encode()
-    if len(byte_key) > AES_KEY_SIZE:
-        return byte_key[:AES_KEY_SIZE]
-
-    while len(byte_key) % AES_KEY_SIZE != 0:
-        byte_key += ' '.encode()
-    return byte_key
+    return pad(byte_key, AES_KEY_SIZE)
 
 
 # 加密
@@ -45,8 +39,9 @@ def AES_DeCrypt(aes_key: str, ase_val: str):
         ase_val = ase_val.encode()
         ase_val_byte = base64.b64decode(ase_val)
         out_src_val = aes_cipher.decrypt(ase_val_byte)
-        return True, out_src_val.decode()
+        return True, unpad(out_src_val, AES_BLOCK_SIZE).decode()
     except Exception as e:
+        print("except Exception:", e)
         logging.exception(e)
         return False, ""
 
@@ -64,6 +59,7 @@ def test():
     aes_val = "hi every body!"
 
     ok, encrypt_val = AES_EnCrypt(aes_key, aes_val)
+    # aes_key = "hello!"
     ok, decrypt_val = AES_DeCrypt(aes_key, encrypt_val)
     print("encrypt_val: {}".format(encrypt_val))
     print("decrypt_val: ", decrypt_val)
