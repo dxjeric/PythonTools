@@ -11,10 +11,11 @@ class QT_MainWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         super(QT_MainWindow, self).__init__(parent)
         self.setupUi(self)
         self.setFixedSize(self.width(), self.height())
-        self.randomPW = PassWordRandom()
-        self.encryptData = EnCryptData()
+        self.randomPW = PassWordRandom()  # 随机新密码
+        self.encryptData = EnCryptData()  # 加密处理
         self.PushButton_SelPWFile.clicked.connect(self.onSelectEcryptFile)
         self.RadioButton_ShowPW.clicked.connect(self.OnChangeShowPassWord)
+        self.PushButton_Random_New.clicked.connect(self.OnRandomNewPassWord)
 
     def OnChangeShowPassWord(self, selected):
         if selected:
@@ -26,6 +27,13 @@ class QT_MainWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         fileDialog = QtWidgets.QFileDialog.getOpenFileName(
             self, "选择文件", "./", "All File(*);;EnCrypt File(*.ecdb)")
         self.TextEdit_PWFile.setText(fileDialog[0])
+
+    def OnRandomNewPassWord(self):
+        b_n = self.CheckBox_Num.isChecked()
+        b_o = self.CheckBox_Other.isChecked()
+        psw_len = int(self.SpinBox_PSWLen.text())
+        new_pw = self.randomPW.randomPassword(psw_len, b_n, b_o)
+        self.LineEdit_PassWord_New.setText(new_pw)
 
 
 # self.LineEditPassWord.setText("1231231231")
