@@ -2,7 +2,7 @@ import json
 
 
 def main():
-    file_path = r"D:\crt\books.json"
+    file_path = r"F:\迅雷下载\books.json"
     f = open(file_path, "r")
     json_root = json.load(f)
 
@@ -18,4 +18,5 @@ def main():
     print("finish!")
 
 
-# main()
+if __name__ == "__main__":
+    main()

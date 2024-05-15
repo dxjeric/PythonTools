@@ -50,9 +50,16 @@ class EnCryptData():
 
     def __init__(self):
         self.md5_check = ""  # 明文秘钥转为MD5后存储使用
+        self.md5_check_changed = True  # 秘钥是否变化
         self.rsa_public_key = ""  # 这里为密文
         self.rsa_private_key = ""  # 这里为密文
+        # encrypte_json: 数据结构 {
+        # "rsa":{"pk": publick_key, "prk": private_key},
+        # "checks": {校验密码字符串1, 校验密码字符串2},
+        # "account_pw":[{"l":地址, "a":账号, "p": 密码, "o":其他数据}]}
         self.encrypte_json = None  # json数据
+        self.encrypte_file = ""  # 文件路径
+        self.encrypte_file_changed = True  # 文件名是否修改过
 
     def loadEnCrypteFile(file_path=""):
         if file_path == "":
@@ -63,6 +70,11 @@ class EnCryptData():
 
     def checkMd5():
         return True
+
+    def changeEncrypteFile(self, file_path):
+        if file_path != self.encrypte_file:
+            self.encrypte_file = file_path
+            self.encrypte_file_changed = True
 
 
 # 测试

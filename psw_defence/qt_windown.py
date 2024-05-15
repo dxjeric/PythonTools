@@ -13,27 +13,54 @@ class QT_MainWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         self.setFixedSize(self.width(), self.height())
         self.randomPW = PassWordRandom()  # 随机新密码
         self.encryptData = EnCryptData()  # 加密处理
+
         self.PushButton_SelPWFile.clicked.connect(self.onSelectEcryptFile)
         self.RadioButton_ShowPW.clicked.connect(self.OnChangeShowPassWord)
         self.PushButton_Random_New.clicked.connect(self.OnRandomNewPassWord)
+        self.PushButton_Save_New.clicked.connect(self.OnSavePassWord)
 
+        self.LineEditPassWord.editingFinished.connect(self.OnSecretkeyChanged)
+        self.LineEditPassWord.isUndoAvailable()
+        self.LineEditPassWord.undoAvailable.connect(self.OnSecretkeyChanged)
+        # self.TextEdit_PWFile.editingFinished.connect(
+        #     self.OnEncrypteFileChanged)
+
+    # 秘钥修改
+    def OnSecretkeyChanged(self):
+        print("OnSecretkeyChanged", self.LineEditPassWord.text())
+
+    def OnEncrypteFileChanged(self):
+        print("finish", self.LineEditPassWord.toPlainText())
+
+    # 是否显示明文密码
     def OnChangeShowPassWord(self, selected):
         if selected:
             self.LineEditPassWord.setEchoMode(QtWidgets.QLineEdit.Normal)
         else:
             self.LineEditPassWord.setEchoMode(QtWidgets.QLineEdit.Password)
 
+    # 选择加密文件
     def onSelectEcryptFile(self):
         fileDialog = QtWidgets.QFileDialog.getOpenFileName(
-            self, "选择文件", "./", "All File(*);;EnCrypt File(*.ecdb)")
+            self, "选择文件", "./", "EnCrypt File(*.ecdb);;All File(*)")
         self.TextEdit_PWFile.setText(fileDialog[0])
+        self.encryptData.changeEncrypteFile(fileDialog[0])
 
+    # 随机密码
     def OnRandomNewPassWord(self):
         b_n = self.CheckBox_Num.isChecked()
         b_o = self.CheckBox_Other.isChecked()
         psw_len = int(self.SpinBox_PSWLen.text())
         new_pw = self.randomPW.randomPassword(psw_len, b_n, b_o)
         self.LineEdit_PassWord_New.setText(new_pw)
+
+    # 修改或者新增密码
+    def OnSavePassWord(self):
+        addr_str = self.LineEdit_Addr_New.text()
+        account_str = self.LineEdit_Account_New.text()
+        password_str = self.LineEdit_PassWord_New.text()
+        other_str = self.TextEdit_Other.toPlainText()
+        print(addr_str, account_str, password_str, other_str)
 
 
 # self.LineEditPassWord.setText("1231231231")
