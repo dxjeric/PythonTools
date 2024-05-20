@@ -1,6 +1,6 @@
-import sys
+import sys, hashlib
 from PyQt5 import QtWidgets, QtCore
-# from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
+from PyQt5.QtCore import Qt
 from psw_defence_GUI import Ui_mainWindow
 from psw_data_mgr import PassWordRandom, EnCryptData
 
@@ -19,18 +19,25 @@ class QT_MainWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         self.PushButton_Random_New.clicked.connect(self.OnRandomNewPassWord)
         self.PushButton_Save_New.clicked.connect(self.OnSavePassWord)
 
-        self.LineEditPassWord.editingFinished.connect(self.OnSecretkeyChanged)
-        self.LineEditPassWord.isUndoAvailable()
-        self.LineEditPassWord.undoAvailable.connect(self.OnSecretkeyChanged)
-        # self.TextEdit_PWFile.editingFinished.connect(
-        #     self.OnEncrypteFileChanged)
+        self.LineEditPassWord.textChanged.connect(self.OnSecretkeyChanged)
+        self.TextEdit_PWFile.textChanged.connect(self.OnEncrypteFileChanged)
+
+    # def keyPressEvent(self, event):
+    #     print("key", event.key(), event.text())
+    #     if event.key() == Qt.Key_Z and event.modifiers() & Qt.ControlModifier:
+    #         sender = self.sender()
+    #         sender.undo()
+    #         print("sender name: ", sender.text(), sender.getObjectName())
+    #         pass
 
     # 秘钥修改
     def OnSecretkeyChanged(self):
-        print("OnSecretkeyChanged", self.LineEditPassWord.text())
+        self.encryptData.changeSecretkey(self.LineEditPassWord.text().encode())
+        # print("OnSecretkeyChanged", self.LineEditPassWord.text(), md5_str)
 
     def OnEncrypteFileChanged(self):
-        print("finish", self.LineEditPassWord.toPlainText())
+        self.encryptData.changeEncrypteFile(self.TextEdit_PWFile.toPlainText())
+        # print("finish", self.TextEdit_PWFile.toPlainText())
 
     # 是否显示明文密码
     def OnChangeShowPassWord(self, selected):
