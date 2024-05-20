@@ -1,4 +1,4 @@
-import random, time, os, hashlib, json
+import random, time, os, hashlib, json, logging
 
 
 # 密码随机
@@ -49,32 +49,69 @@ class PassWordRandom():
 class EnCryptData():
 
     def __init__(self):
-        self.md5_check = ""  # 明文秘钥转为MD5后存储使用
-        self.md5_check_changed = True  # 秘钥是否变化
+        self.secret_key = ""  # 明文秘钥转为MD5后存储使用
+        self.secret_key_changed = True  # 秘钥是否变化
         self.rsa_public_key = ""  # 这里为密文
         self.rsa_private_key = ""  # 这里为密文
         # encrypte_json: 数据结构 {
-        # "rsa":{"pk": publick_key, "prk": private_key},
+        # "rsa":{"pk": publick_key, "rk": private_key},
         # "checks": {校验密码字符串1, 校验密码字符串2},
         # "account_pw":[{"l":地址, "a":账号, "p": 密码, "o":其他数据}]}
         self.encrypte_json = None  # json数据
-        self.encrypte_file = ""  # 文件路径
-        self.encrypte_file_changed = True  # 文件名是否修改过
+        self.encrypte_file_path = ""  # 文件路径
+        self.encrypte_file_path_changed = True  # 文件名是否修改过
+        self.checks = ["i96z5~13&o1W&Sv4gD",
+                       "B#6@RdZmQUW?nxKdqJ"]  # 这个只能增加不能修改, 并且顺序不能变
 
-    def loadEnCrypteFile(file_path=""):
-        if file_path == "":
-            return False, "请选择数据文件!"
+    # 校验文件数据是否正确
+    def checkMd5(self, md5_str: str, file_data: bytes):
+        md5 = hashlib.md5()
+        md5.update(file_data)
+        check_str = md5.hexdigest()
+        return (md5_str == check_str)
 
-        if os.path.isfile(file_path):
-            return False, "错误的文件路径, 请重新选择!"
+    # 解析数据
+    def parseEncrypteData(self, data_bytes: bytes):
+        try:
+            json_root = json.loads(data_bytes)
+            self.rsa_public_key = json_root["rsa"]["pk"]
+            self.rsa_private_key = json_root["rsa"]["rk"]
+            self.encrypte_json = json_root
 
-    def checkMd5():
-        return True
+        except Exception as e:
+            print("except Exception:", e)
+            logging.exception(e)
+        return False, "配置数据解析失败"
+
+    # 加密文件加载
+    def loadEncrypteFileData(self, force_load: False):
+        if self.encrypte_file_path_changed or force_load:
+            if self.encrypte_file_path == "":
+                return False, "请选择数据文件!"
+
+            if os.path.isfile(self.encrypte_file_path):
+                return False, "错误的文件路径, 请重新选择!"
+            self.encrypte_file_path_changed = False
+            ef = open(self.encrypte_file_path, "rb")
+            if ef:
+                file_md5_bytes = ef.read(32)  # md5码校验数据
+                data_bytes = ef.read()  # 数据块
+                if self.checkMd5(file_md5_bytes.decode(), data_bytes):
+                    return self.parseEncrypteData(data_bytes)
+                else:
+                    return False, "加密文件数据被修改"
+            else:
+                return False, "文件打开失败"
 
     def changeEncrypteFile(self, file_path):
-        if file_path != self.encrypte_file:
-            self.encrypte_file = file_path
-            self.encrypte_file_changed = True
+        if file_path != self.encrypte_file_path:
+            self.encrypte_file_path = file_path
+            self.encrypte_file_path_changed = True
+
+    def changeSecretkey(self, new_sk):
+        if new_sk != self.secret_key:
+            self.secret_key = new_sk
+            self.secret_key_changed = True
 
 
 # 测试
