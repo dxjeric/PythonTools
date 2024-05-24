@@ -81,8 +81,15 @@ class EnCryptData():
 
         first_check_str = AES_Interface.AES_DeCrypt(
             self.secret_key, self.encrypte_json["checks"][0])
+        if first_str != first_check_str:
+            return False, "秘钥校验失败"
+
+        self.rsa_public_key = AES_Interface.AES_DeCrypt(
+            self.secret_key, self.encrypte_json["rsa"]["pk"])
+        self.rsa_private_key = AES_Interface.AES_DeCrypt(
+            self.secret_key, self.encrypte_json["rsa"]["rk"])
         second_check_str = RSA_Interface.RSA_DeCrypt(
-            self.secret_key, self.encrypte_json["checks"][0])
+            self.secret_key, self.encrypte_json["checks"][1])
         if first_str == first_check_str and second_str == second_check_str:
             return True
         else:
@@ -92,8 +99,6 @@ class EnCryptData():
     def parseEncrypteData(self, data_bytes: bytes):
         try:
             json_root = json.loads(data_bytes)
-            self.rsa_public_key = json_root["rsa"]["pk"]
-            self.rsa_private_key = json_root["rsa"]["rk"]
             self.encrypte_json = json_root
 
         except Exception as e:
