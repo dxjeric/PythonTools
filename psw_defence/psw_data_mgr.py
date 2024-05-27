@@ -91,7 +91,7 @@ class EnCryptData():
         second_check_str = RSA_Interface.RSA_DeCrypt(
             self.secret_key, self.encrypte_json["checks"][1])
         if first_str == first_check_str and second_str == second_check_str:
-            return True
+            return True, ""
         else:
             return False, "秘钥校验失败"
 
