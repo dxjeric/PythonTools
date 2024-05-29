@@ -43,5 +43,23 @@ def main():
         print("cards: ", cards, "card_str: ", card_str)
 
 
+def tranMoney(bean):
+    dws = ["", "万", "亿", "兆", "京"]
+    beans = []
+    qiuyu = 10000
+    for i in range(5):
+        dw = dws[i]
+        v = bean % 10000
+        if v > 0:
+            beans.append("{}{}".format(v, dw))
+        bean = int(bean / 10000)
+        if bean <= 0:
+            break
+
+    beans.reverse()
+    print("out: ", " ".join(beans))
+
+
 if __name__ == "__main__":
-    main()
+    # main()
+    tranMoney(235929600)

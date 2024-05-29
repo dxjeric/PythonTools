@@ -58,7 +58,7 @@ class EnCryptData():
         # encrypte_json: 数据结构 {
         # "rsa":{"pk": publick_key, "rk": private_key}, 使用秘钥加密(aes)
         # "checks": {校验密码字符串1, 校验密码字符串2}, 字符串1使用秘钥加密， 字符串2使用非对称加密(ras)
-        # "account_pw":[{"l":地址, "a":账号, "p": 密码, "o":其他数据}]}
+        # "cipher_data":[{"l":地址, "a":账号, "p": 密码, "o":其他数据}]}
         self.encrypte_json = None  # json数据
         self.encrypte_file_path = ""  # 文件路径
         self.encrypte_file_path_changed = True  # 文件名是否修改过
@@ -119,6 +119,7 @@ class EnCryptData():
             if ef:
                 file_md5_bytes = ef.read(32)  # md5码校验数据
                 data_bytes = ef.read()  # 数据块
+                ef.close()
                 if self.checkMd5(file_md5_bytes.decode(), data_bytes):
                     return self.parseEncrypteData(data_bytes)
                 else:
@@ -135,6 +136,30 @@ class EnCryptData():
         if new_sk != self.secret_key:
             self.secret_key = new_sk
             self.secret_key_changed = True
+
+    def checkRSAEnCrypt(self, ori_str, cip_str, key):
+        ok, de_cip_str = RSA_Interface.RSA_DeCrypt(self.rsa_private_key,
+                                                   cip_str)
+        if not ok:
+            return False, "校验[{}]失败".format(key)
+        if ori_str == de_cip_str:
+            return True
+        else:
+            return False, "加密错误[{}]".format(key)
+
+    def saveToFile(self):
+        json_bytes = json.dumps(self.encrypte_json)
+        md5 = hashlib.md5()
+        md5.update(json_bytes)
+        md5_str = md5.hexdigest()
+        ef = open(self.encrypte_file_path, "wb")
+        if ef is None:
+            return False, "文件写失败"
+
+        ef.write(md5_str)
+        ef.write(json_bytes)
+        ef.close()
+        return True
 
     def saveAccountInfo(self, addr: str, account: str, password: str,
                         other: str):
@@ -155,6 +180,53 @@ class EnCryptData():
             ok, err = self.checkSecretKey()
             if not ok:
                 return False, err
+        # "account_pw":[{"l":地址, "a":账号, "p": 密码, "o":其他数据}]}
+
+        save_data = {}
+        save_data["addr"] = RSA_Interface.RSA_EnCrypt(self.rsa_public_key,
+                                                      addr)
+        save_data["account"] = RSA_Interface.RSA_EnCrypt(
+            self.rsa_public_key, account)
+        save_data["password"] = RSA_Interface.RSA_EnCrypt(
+            self.rsa_public_key, password)
+        save_data["other"] = RSA_Interface.RSA_EnCrypt(self.rsa_public_key,
+                                                       other)
+
+        ok, err_str = self.checkRSAEnCrypt(addr, save_data["addr"], "addr")
+        if not ok:
+            return False, err_str
+        ok, err_str = self.checkRSAEnCrypt(account, save_data["account"],
+                                           "account")
+        if not ok:
+            return False, err_str
+        ok, err_str = self.checkRSAEnCrypt(password, save_data["password"],
+                                           "password")
+        if not ok:
+            return False, err_str
+        ok, err_str = self.checkRSAEnCrypt(other, save_data["other"], "other")
+        if not ok:
+            return False, err_str
+
+        update_data = False
+        is_new = True
+        for item in self.encrypte_json["cipher_data"]:
+            if item["addr"] == save_data["addr"] and item[
+                    "account"] == save_data["account"]:
+                is_new = False
+                if len(password) > 0:
+                    item["password"] = save_data["addr"]
+                    update_data = True
+                if len(other) > 0:
+                    item["other"] = save_data["other"]
+                    update_data = True
+                break
+        if is_new:
+            self.encrypte_json["cipher_data"].append(save_data)
+            update_data = True
+        if not update_data:
+            return True
+
+        return self.saveToFile()
 
 
 # 测试
