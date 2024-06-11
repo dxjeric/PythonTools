@@ -19,9 +19,10 @@ class PassWordRandom():
             '~', '!', '@', '#', '$', '%', '^', '&', '*', '?', '_', '-'
         ]
 
-    def randomPassword(self, psw_len=8, n=True, o=False):
+    def randomPassword(self, psw_len=16, n=True, o=False):
         _all_chars = self.Chars.copy()
         new_ps_array = []
+        other_ps_array = []
         if n:
             r = random.randint(0, len(self.Nums) - 1)
             new_ps_array.append(self.Nums[r])
@@ -29,10 +30,10 @@ class PassWordRandom():
                 _all_chars.append(one)
 
         if o:
-            r = random.randint(0, len(self.Others) - 1)
-            new_ps_array.append(self.Others[r])
-            for one in self.Others:
-                _all_chars.append(one)
+            _c = random.randint(1, max(1, int(psw_len / 8)))
+            for _ in range(_c):
+                r = random.randint(0, len(self.Others) - 1)
+                new_ps_array.append(self.Others[r])
 
         all_chars_size = len(_all_chars)
         # print("new_ps_array: ", new_ps_array)

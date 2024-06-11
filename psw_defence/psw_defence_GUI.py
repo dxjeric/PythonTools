@@ -190,7 +190,7 @@ class Ui_mainWindow(object):
         self.SpinBox_PSWLen.setGeometry(QtCore.QRect(480, 40, 42, 22))
         self.SpinBox_PSWLen.setMinimum(8)
         self.SpinBox_PSWLen.setMaximum(99)
-        self.SpinBox_PSWLen.setProperty("value", 8)
+        self.SpinBox_PSWLen.setProperty("value", 16)
         self.SpinBox_PSWLen.setObjectName("SpinBox_PSWLen")
         self.GroupBox_New_Q = QtWidgets.QGroupBox(self.centralwidget)
         self.GroupBox_New_Q.setGeometry(QtCore.QRect(9, 360, 531, 211))
