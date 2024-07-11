@@ -1,6 +1,7 @@
 # encoding: utf8
 
 import sys, os, ftplib, socket
+import base64, logging
 
 
 def main():
@@ -62,4 +63,4 @@ def tranMoney(bean):
 
 if __name__ == "__main__":
     # main()
-    tranMoney(235929600)
+    tranMoney(1000000000)

@@ -37,7 +37,7 @@ class PassWordRandom():
 
         all_chars_size = len(_all_chars)
         # print("new_ps_array: ", new_ps_array)
-        for _ in range(psw_len):
+        for _ in range(psw_len - len(new_ps_array)):
             r = random.randint(0, all_chars_size - 1)
             new_ps_array.append(_all_chars[r])
 
