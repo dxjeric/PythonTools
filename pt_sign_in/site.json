@@ -1,0 +1,26 @@
+[
+	{
+		"site": "ptchina",
+		"url": "https://ptchina.org/attendance.php",
+		"cookie":"",
+		"re":""
+	},
+	{
+		"site": "tosky",
+		"url": "https://t.tosky.club/attendance.php",
+		"cookie":"",
+		"re":""
+	},
+	{
+		"site": "hdkyl",
+		"url": "https://www.hdkyl.in/attendance.php",
+		"cookie":"",
+		"re":""
+	},
+	{
+		"site": "rousi",
+		"url": "https://rousi.zip/attendance.php",
+		"cookie":"",
+		"re":""
+	}
+]
