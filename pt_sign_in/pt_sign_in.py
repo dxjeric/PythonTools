@@ -107,8 +107,8 @@ def timer_sign_in():
 def day_run():
     while timer_sign_in():
         now_time = time.time()
-        next_zero_time = now_time - now_time % 86400 + time.timezone + 3600 * 24 + 60
-        sleep_time = next_zero_time - now_time
+        today_zero = (now_time - (now_time - time.timezone) % 86400)
+        sleep_time = today_zero + 86400 - now_time + 60
         logging.debug("sleep_time: {}".format(sleep_time))
         time.sleep(sleep_time)
 
