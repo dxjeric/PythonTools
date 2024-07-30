@@ -22,5 +22,11 @@
 		"url": "https://rousi.zip/attendance.php",
 		"cookie":"",
 		"re":""
+	},
+	{
+		"site": "bitporn",
+		"url": "https://bitporn.eu/attendance.php",
+		"cookie":"",
+		"re":""
 	}
 ]
