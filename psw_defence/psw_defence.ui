@@ -603,7 +603,7 @@
      <property name="geometry">
       <rect>
        <x>441</x>
-       <y>30</y>
+       <y>28</y>
        <width>75</width>
        <height>24</height>
       </rect>
@@ -628,7 +628,7 @@
      <property name="geometry">
       <rect>
        <x>441</x>
-       <y>61</y>
+       <y>59</y>
        <width>75</width>
        <height>24</height>
       </rect>
@@ -689,13 +689,13 @@
       <number>25</number>
      </attribute>
      <attribute name="horizontalHeaderDefaultSectionSize">
-      <number>127</number>
+      <number>123</number>
      </attribute>
      <attribute name="horizontalHeaderHighlightSections">
       <bool>true</bool>
      </attribute>
      <attribute name="verticalHeaderVisible">
-      <bool>false</bool>
+      <bool>true</bool>
      </attribute>
      <row/>
      <row/>

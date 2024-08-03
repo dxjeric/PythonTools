@@ -18,6 +18,8 @@ class QT_MainWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         self.RadioButton_ShowPW.clicked.connect(self.OnChangeShowPassWord)
         self.PushButton_Random_New.clicked.connect(self.OnRandomNewPassWord)
         self.PushButton_Save_New.clicked.connect(self.OnSavePassWord)
+        self.PushButton_Query_ALL.clicked.connect(self.OnQeuryAll)
+        self.TableWidget_Result.itemClicked.connect(self.OnClickItem)
 
         self.LineEditPassWord.textChanged.connect(self.OnSecretkeyChanged)
         self.TextEdit_PWFile.textChanged.connect(self.OnEncrypteFileChanged)
@@ -68,6 +70,14 @@ class QT_MainWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         password_str = self.LineEdit_PassWord_New.text()
         other_str = self.TextEdit_Other.toPlainText()
         print(addr_str, account_str, password_str, other_str)
+
+    # 查询全部
+    def OnQeuryAll(self):
+        print("OK")
+
+    # 点选信息
+    def OnClickItem(self, item):
+        print(item.row(), item.column(), item.text())
 
 
 # self.LineEditPassWord.setText("1231231231")
