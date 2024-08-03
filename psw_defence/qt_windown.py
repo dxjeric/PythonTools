@@ -1,6 +1,6 @@
 import sys, hashlib
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QModelIndex
 from psw_defence_GUI import Ui_mainWindow
 from psw_data_mgr import PassWordRandom, EnCryptData
 
@@ -20,9 +20,12 @@ class QT_MainWindow(QtWidgets.QMainWindow, Ui_mainWindow):
         self.PushButton_Save_New.clicked.connect(self.OnSavePassWord)
         self.PushButton_Query_ALL.clicked.connect(self.OnQeuryAll)
         self.TableWidget_Result.itemClicked.connect(self.OnClickItem)
+        # self.TableWidget_Result.itemSelectionChanged.connect(self.OnClickRow)
 
         self.LineEditPassWord.textChanged.connect(self.OnSecretkeyChanged)
         self.TextEdit_PWFile.textChanged.connect(self.OnEncrypteFileChanged)
+
+        self.Test()
 
     # def keyPressEvent(self, event):
     #     print("key", event.key(), event.text())
@@ -78,6 +81,14 @@ class QT_MainWindow(QtWidgets.QMainWindow, Ui_mainWindow):
     # 点选信息
     def OnClickItem(self, item):
         print(item.row(), item.column(), item.text())
+
+    def Test(self):
+        _items_ = ["google.com", "frederick", "eric", "other"]
+        _row_ = self.TableWidget_Result.rowCount()
+        self.TableWidget_Result.insertRow(_row_)
+        for i in range(len(_items_)):
+            item = QtWidgets.QTableWidgetItem(str(_items_[i]))
+            self.TableWidget_Result.setItem(_row_, i, item)
 
 
 # self.LineEditPassWord.setText("1231231231")
