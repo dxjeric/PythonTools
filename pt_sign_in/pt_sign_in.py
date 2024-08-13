@@ -75,21 +75,27 @@ def send_notify(sign_in_result: dict):
     requests.get(sen_url, headers=headers)
 
 
-def process_sign_in(all_sign):
+def process_sign_in(all_sign, first_sign):
     json_data = open('site.json', encoding='utf-8')
     json_data = json.load(json_data)
-    sign_in_result = {}
     total_count = 0
+    sign_in_result = {}
+
     for item in json_data:
         total_count += 1
         site = item["site"]
         if site not in all_sign:
             get_page(item, sign_in_result)
 
-    send_notify(sign_in_result)
+    sign_ok_count = 0
     for k, v in sign_in_result.items():
         if v:
             all_sign.append(k)
+            sign_ok_count += 1
+
+    if sign_ok_count > 0 or first_sign:
+        send_notify(sign_in_result)
+
     logging.debug("total_count: {}, sites: {}".format(total_count,
                                                       len(all_sign)))
     return len(all_sign) == total_count
@@ -97,7 +103,9 @@ def process_sign_in(all_sign):
 
 def timer_sign_in():
     all_sign = []
-    while not process_sign_in(all_sign):
+    first_sign = True
+    while not process_sign_in(all_sign, first_sign):
+        first_sign = False
         logging.debug("wait sign in next: {}".format(60))
         time.sleep(60)
 
