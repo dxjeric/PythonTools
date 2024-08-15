@@ -15,7 +15,9 @@
 		"site": "hdkyl",
 		"url": "https://www.hdkyl.in/attendance.php",
 		"cookie":"",
-		"re":""
+		"re":"",
+		"thanks":"https://www.hdkyl.in/thanks.php",
+		"referer":"https://www.hdkyl.in/details.php?id={}&hit=1"
 	},
 	{
 		"site": "rousi",
@@ -28,5 +30,10 @@
 		"url": "https://bitporn.eu/attendance.php",
 		"cookie":"",
 		"re":""
+	},
+	{
+		"site": "ilolicon",
+		"url": "https://share.ilolicon.com/attendance.php",
+		"cookie":""
 	}
 ]
