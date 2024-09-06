@@ -82,6 +82,9 @@ def process_sign_in(all_sign, first_sign):
     sign_in_result = {}
 
     for item in json_data:
+        if "skip" in item and item["skip"]:
+            continue
+
         total_count += 1
         site = item["site"]
         if site not in all_sign:
