@@ -70,7 +70,9 @@ def send_notify(sign_in_result: dict):
     now_time = '%3Ccenter%3E%3Cb%3E%3Cfont%20color%3D%22%2355a7e3%22%3E' + parse.unquote(
         time) + '%3C%2Ffont%3E%3C%2Fb%3E%3C%2Fcenter%3E%3Cbr%3E'
     send_str = ''.join(send_txt)
-    api = 'http://iyuu.cn/IYUU39484Tc2791a1718e1e8ca5351030616ef6e9252c62016.send'
+    # IYUU39484Tc2791a1718e1e8ca5351030616ef6e9252c62016
+    # IYUU44612T563365f270ffcdca79d26d1083fcd14d3d29c58a
+    api = 'http://iyuu.cn/IYUU44612T563365f270ffcdca79d26d1083fcd14d3d29c58a.send'
     sen_url = api + '?text=PT%E7%AD%BE%E5%88%B0%E5%8A%A9%E6%89%8B&desp=' + now_time + send_str
     requests.get(sen_url, headers=headers)
 
