@@ -4,6 +4,7 @@
 # github:  https://github.com/aLuvletter/pt_res.git
 
 import datetime, re, time, requests, json, logging
+import asyncio
 from urllib import parse
 from threading import Timer
 
@@ -106,7 +107,7 @@ def process_sign_in(all_sign, first_sign):
     return len(all_sign) == total_count
 
 
-def timer_sign_in():
+async def timer_sign_in():
     all_sign = []
     first_sign = True
     while not process_sign_in(all_sign, first_sign):
@@ -118,12 +119,15 @@ def timer_sign_in():
 
 
 def day_run():
-    while timer_sign_in():
+    asyncio.run(timer_sign_in())
+    while True:
         now_time = time.time()
         today_zero = (now_time - (now_time - time.timezone) % 86400)
         sleep_time = today_zero + 86400 - now_time + 60
         logging.debug("sleep_time: {}".format(sleep_time))
         time.sleep(sleep_time)
+        asyncio.run(timer_sign_in())
+        logging.debug("sleep_time: {}".format(sleep_time))
 
 
 if __name__ == '__main__':

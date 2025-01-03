@@ -101,3 +101,21 @@ python3 pt.py
 1. 新增爱语飞飞微信通知推送;
 
 2. 删除使用Python项目管理器运行方式
+
+
+Jackett（辅种、索引）
+-https://github.com/Jackett/Jackett
+IYUUPlus（辅种）
+-https://github.com/ledccn/IYUUPlus
+Auto-Feed（转种）
+-https://github.com/tomorrow505/auto_feed_js
+NasTools（刮削、自动签到、影音库）
+-https://github.com/NAStool/nas-tools
+PT-Plugin-Plus（数据统计、批量下载）
+-https://github.com/pt-plugins/PT-Plugin-Plus
+upload-machine（批量发种）
+-https://github.com/dongshuyan/Upload_Machine
+Vertex（刷流）
+-https://github.com/vertex-app/vertex
+PTools（签到，最新版本已收费）
+-https://github.com/ngfchl/ptools
