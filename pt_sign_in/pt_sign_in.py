@@ -110,12 +110,11 @@ def process_sign_in(all_sign, first_sign):
 async def timer_sign_in():
     all_sign = []
     first_sign = True
+    logging.debug("do timer_sign_in")
     while not process_sign_in(all_sign, first_sign):
         first_sign = False
         logging.debug("wait sign in next: {}".format(60))
         time.sleep(60)
-
-    return True
 
 
 def day_run():
@@ -127,7 +126,6 @@ def day_run():
         logging.debug("sleep_time: {}".format(sleep_time))
         time.sleep(sleep_time)
         asyncio.run(timer_sign_in())
-        logging.debug("sleep_time: {}".format(sleep_time))
 
 
 if __name__ == '__main__':
