@@ -1,6 +1,7 @@
 import random, time, os, hashlib, json, logging
 import AES_Interface
 import RSA_Interface
+import sqlite3
 
 
 # 密码随机
@@ -52,6 +53,7 @@ class PassWordRandom():
 class EnCryptData():
 
     def __init__(self):
+        self.query_table_row = -1  # 选择行
         self.secret_key = ""  # 秘钥
         self.secret_key_changed = True  # 秘钥是否变化
         self.rsa_public_key = ""  # 这里为密文
@@ -59,8 +61,10 @@ class EnCryptData():
         # encrypte_json: 数据结构 {
         # "rsa":{"pk": publick_key, "rk": private_key}, 使用秘钥加密(aes)
         # "checks": {校验密码字符串1, 校验密码字符串2}, 字符串1使用秘钥加密， 字符串2使用非对称加密(ras)
-        # "cipher_data":[{"l":地址, "a":账号, "p": 密码, "o":其他数据}]}
+        # "cipher_data": 加密数据数据 直接加密json字串
+        # [{"l":地址, "a":账号, "p": 密码, "o":其他数据}]}
         self.encrypte_json = None  # json数据
+        self.account_info = None
         self.encrypte_file_path = ""  # 文件路径
         self.encrypte_file_path_changed = True  # 文件名是否修改过
         self.checks = ["i96z5~13&o1W&Sv4gD",
@@ -89,18 +93,41 @@ class EnCryptData():
             self.secret_key, self.encrypte_json["rsa"]["pk"])
         self.rsa_private_key = AES_Interface.AES_DeCrypt(
             self.secret_key, self.encrypte_json["rsa"]["rk"])
-        second_check_str = RSA_Interface.RSA_DeCrypt(
+        second_check_str = RSA_Interface.AES_DeCrypt(
             self.secret_key, self.encrypte_json["checks"][1])
         if first_str == first_check_str and second_str == second_check_str:
             return True, ""
         else:
             return False, "秘钥校验失败"
 
+    # 解密账号数据
+    def decrypteAccountInfo(self):
+        try:
+            ok, de_str = RSA_Interface.RSA_DeCrypt(
+                self.secret_key, self.encrypte_json["cipher_data"])
+            if not ok:
+                return False, de_str
+
+            json_root = json.loads(de_str.encode())
+            self.account_info = json_root
+            return True, ""
+        except Exception as e:
+            print("except Exception:", e)
+            logging.exception(e)
+        return False, "解析账号数据失败"
+
     # 解析数据
     def parseEncrypteData(self, data_bytes: bytes):
         try:
             json_root = json.loads(data_bytes)
             self.encrypte_json = json_root
+            _ok, _str = self.checkSecretKey()
+            if not _ok:
+                return False, _str
+
+            _ok, _str = self.decrypteAccountInfo()
+            if not _ok:
+                return False, _str
 
         except Exception as e:
             print("except Exception:", e)
@@ -149,6 +176,7 @@ class EnCryptData():
             return False, "加密错误[{}]".format(key)
 
     def saveToFile(self):
+        self.encrypte_json["cipher_data"]
         json_bytes = json.dumps(self.encrypte_json)
         md5 = hashlib.md5()
         md5.update(json_bytes)
@@ -184,29 +212,10 @@ class EnCryptData():
         # "account_pw":[{"l":地址, "a":账号, "p": 密码, "o":其他数据}]}
 
         save_data = {}
-        save_data["addr"] = RSA_Interface.RSA_EnCrypt(self.rsa_public_key,
-                                                      addr)
-        save_data["account"] = RSA_Interface.RSA_EnCrypt(
-            self.rsa_public_key, account)
-        save_data["password"] = RSA_Interface.RSA_EnCrypt(
-            self.rsa_public_key, password)
-        save_data["other"] = RSA_Interface.RSA_EnCrypt(self.rsa_public_key,
-                                                       other)
-
-        ok, err_str = self.checkRSAEnCrypt(addr, save_data["addr"], "addr")
-        if not ok:
-            return False, err_str
-        ok, err_str = self.checkRSAEnCrypt(account, save_data["account"],
-                                           "account")
-        if not ok:
-            return False, err_str
-        ok, err_str = self.checkRSAEnCrypt(password, save_data["password"],
-                                           "password")
-        if not ok:
-            return False, err_str
-        ok, err_str = self.checkRSAEnCrypt(other, save_data["other"], "other")
-        if not ok:
-            return False, err_str
+        save_data["addr"] = addr
+        save_data["account"] = account
+        save_data["password"] = password
+        save_data["other"] = other
 
         update_data = False
         is_new = True
@@ -229,9 +238,40 @@ class EnCryptData():
 
         return self.saveToFile()
 
+    def setQueryTableIndex(self, row: int):
+        self.query_table_row = row
+
 
 # 测试
 def test():
+    # conn = sqlite3.connect("test.db")
+    #
+    # try:
+    #     conn.execute('''CREATE TABLE STUDENT
+    #          (ID INT PRIMARY KEY NOT NULL,
+    #          NAME TEXT NOT NULL,
+    #          AGE INT NOT NULL);''')
+    # except sqlite3.OperationalError as e:
+    #     print("except Exception:", e)
+    #     # logging.exception(e)
+    #
+    # conn.execute("INSERT INTO STUDENT (ID, NAME, AGE) \
+    #           VALUES (1, '张三', 18)")
+    # conn.execute("INSERT INTO STUDENT (ID, NAME, AGE) \
+    #             VALUES (2, '李四', 20)")
+    # conn.execute("INSERT INTO STUDENT (ID, NAME, AGE) \
+    #             VALUES (3, '王五', 22)")
+    # conn.commit()
+    # cursor = conn.execute("SELECT ID, NAME, AGE from STUDENT")
+    # for row in cursor:
+    #     print("ID = {}，姓名 = {}，年龄 = {}".format(row[0], row[1], row[2]))
+
+    # conn.execute("UPDATE STUDENT set AGE = 21 where ID = 2")
+    # conn.execute("DELETE from STUDENT where ID = 3")
+    # conn.commit()
+
+    # conn.close()
+
     # md5 = hashlib.md5()
     # md5.update("1".encode())
     # md5_str = md5.hexdigest()
@@ -254,9 +294,8 @@ def test():
     #     f.close()
 
     pwr = PassWordRandom()
-    print(pwr.randomPassword(8, True, True))
-    print(pwr.randomPassword(8, True, False))
-    print(pwr.randomPassword(8, True))
+    print()
+    print(pwr.randomPassword(16, True, True))
 
 
 if __name__ == "__main__":

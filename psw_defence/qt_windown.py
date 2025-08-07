@@ -80,7 +80,7 @@ class QT_MainWindow(QtWidgets.QMainWindow, Ui_mainWindow):
 
     # 点选信息
     def OnClickItem(self, item):
-        print(item.row(), item.column(), item.text())
+        self.encryptData.setQueryTableIndex(item.row())
 
     def Test(self):
         _items_ = ["google.com", "frederick", "eric", "other"]

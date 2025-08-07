@@ -118,14 +118,14 @@ async def timer_sign_in():
 
 
 def day_run():
-    asyncio.run(timer_sign_in())
+    asyncio.create_task(timer_sign_in())
     while True:
         now_time = time.time()
         today_zero = (now_time - (now_time - time.timezone) % 86400)
         sleep_time = today_zero + 86400 - now_time + 60
         logging.debug("sleep_time: {}".format(sleep_time))
         time.sleep(sleep_time)
-        asyncio.run(timer_sign_in())
+        asyncio.create_task(timer_sign_in())
 
 
 if __name__ == '__main__':

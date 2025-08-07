@@ -1,39 +1,62 @@
 [
 	{
+		"skip": false,
 		"site": "ptchina",
 		"url": "https://ptchina.org/attendance.php",
-		"cookie":"",
-		"re":""
+		"cookie": "c_secure_uid=MTg3NjY%3D; c_secure_pass=648808465e45d00741a3de998b8ed807; c_secure_ssl=eWVhaA%3D%3D; c_secure_tracker_ssl=eWVhaA%3D%3D; c_secure_login=bm9wZQ%3D%3D"
 	},
 	{
+		"skip": true,
 		"site": "tosky",
 		"url": "https://t.tosky.club/attendance.php",
-		"cookie":"",
-		"re":""
+		"cookie": "c_secure_uid=MTE0NzE%3D; c_secure_pass=cf842fae619e6cb739ad33d99e5dae19; c_secure_ssl=eWVhaA%3D%3D; c_secure_tracker_ssl=eWVhaA%3D%3D; c_secure_login=bm9wZQ%3D%3D"
 	},
 	{
+		"skip": false,
 		"site": "hdkyl",
 		"url": "https://www.hdkyl.in/attendance.php",
-		"cookie":"",
-		"re":"",
-		"thanks":"https://www.hdkyl.in/thanks.php",
-		"referer":"https://www.hdkyl.in/details.php?id={}&hit=1"
+		"cookie": "c_secure_uid=MjUxNDk%3D; c_secure_pass=49a50ce6a366145fa1be218f66b82710; c_secure_ssl=eWVhaA%3D%3D; c_secure_tracker_ssl=eWVhaA%3D%3D; c_secure_login=bm9wZQ%3D%3D; sl-session=ojmqY7A7mmbHSJFtKHCmwg=="
 	},
 	{
+		"skip": false,
 		"site": "rousi",
 		"url": "https://rousi.zip/attendance.php",
-		"cookie":"",
-		"re":""
+		"cookie": "_pk_id.4.9341=8b31f04885df71ec.1716521442.; c_secure_uid=MjI5ODE%3D; c_secure_pass=d67665898ea88761430aa0deabfb4076; c_secure_ssl=eWVhaA%3D%3D; c_secure_tracker_ssl=eWVhaA%3D%3D; c_secure_login=bm9wZQ%3D%3D"
 	},
 	{
+		"skip": false,
 		"site": "bitporn",
 		"url": "https://bitporn.eu/attendance.php",
-		"cookie":"",
-		"re":""
+		"cookie":"c_secure_uid=MzAwMjI%3D; c_secure_pass=461c0f8bedfdd750f890eaf2c0d1aac3; c_secure_ssl=eWVhaA%3D%3D; c_secure_tracker_ssl=eWVhaA%3D%3D; c_secure_login=bm9wZQ%3D%3D"
 	},
 	{
+		"skip": false,
 		"site": "ilolicon",
 		"url": "https://share.ilolicon.com/attendance.php",
-		"cookie":""
+		"cookie":"c_secure_uid=MTM4MjI%3D; c_secure_pass=2f47f9b44ac699b35febbce9c3f5424e; c_secure_ssl=bm9wZQ%3D%3D; c_secure_tracker_ssl=bm9wZQ%3D%3D; c_secure_login=bm9wZQ%3D%3D; __waf_under_attack_time=1723703259; __waf_under_attack_uid=UMbQFOLAicZoANMTDMbvDlKXEuNWOdBLrWyZgmDmfLnikyOzfVpxXgTivxqvVbnm; __waf_under_attack_hmac=3a73bdf75fc4f026a20313b46116820d26586da89d3467a306b6f48c13ff1651"
+	},
+	{
+		"skip": false,
+		"site": "kamept",
+		"url": "https://kamept.com/attendance.php",
+		"cookie":"cf_clearance=oUUIXOyv6KV.IWdl7wpYFxdjTfX3HyJCDBowT2y45yY-1723892420-1.2.1.1-5VWp4y4lpy4xd.VQfNzWKTE38UQimxbvXMYjQDn_kgElTtTFjgzClr06FEatjOzI8ZI8QYwjLEkVY2IM1Rl3nYzUw3pZXj_7mbfZDOnfikuFS6TRpVJ8kiqQbWdHo.yy8jOm9lCqv3d0POoJ.5TCRDCkCkj8i5ZY7Ro7hI6HBNolUYskCZHiUB1WEE1zXADoBpQBNbphj6Bq3O3QU9LNsXsVk0eRtG4vnylfO.4hKmgmRaeaom6mcG2zdxvuxRXpgwe7eeWBZ4OGam0kRtEErMGl1vIhaEMz2.ryPdbBIEfJNK2mQ5CqRICFbjnkS7.LZSz_iJQxI3tD.zH0gT3Uxspe_ZGeZZNH1_7hDC2jcD7U36eQTjguWqAZEHkhU8rVIvEOfegW3t3WDkl5q5hWy4AtexpEYvqCg5uy6wGGZ9k; c_secure_uid=MjA4NzU%3D; c_secure_tracker_ssl=bm9wZQ%3D%3D; c_secure_pass=aedbff14107c8f5f68c9f9e5d2f7e663; c_secure_ssl=eWVhaA%3D%3D; c_secure_login=bm9wZQ%3D%3D"
+	},
+	{
+		"skip": false,
+		"site": "qingwa",
+		"url": "https://www.qingwapt.com/attendance.php",
+		"cookie":"c_secure_uid=NzAyODUz; c_secure_pass=0e50f73cffa95d33d8bb74b18b58e0c0; c_secure_ssl=eWVhaA%3D%3D; c_secure_tracker_ssl=eWVhaA%3D%3D; c_secure_login=bm9wZQ%3D%3D"
+	},
+	{
+		"skip": false,
+		"site":"okpt",
+		"url":"https://www.okpt.net/attendance.php",
+		"cookie":"c_secure_uid=MTU4MDI%3D; c_secure_pass=a30ad26e6e629378267fa21c451d5d2e; c_secure_ssl=eWVhaA%3D%3D; c_secure_tracker_ssl=eWVhaA%3D%3D; c_secure_login=bm9wZQ%3D%3D"
+	},
+	{
+		"skip": false,
+		"site":"nice",
+		"url":"https://www.nicept.net/attendance.php",
+		"cookie":"c_secure_uid=MTE4Mzc4Mg%3D%3D; c_secure_pass=112b42a2930b5c86529e09902c0e1788; c_secure_ssl=eWVhaA%3D%3D; c_secure_tracker_ssl=eWVhaA%3D%3D; c_secure_login=bm9wZQ%3D%3D"
 	}
 ]
